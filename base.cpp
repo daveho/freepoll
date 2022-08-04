@@ -1,3 +1,4 @@
+#include <cassert>
 #include <vector>
 #include "exception.h"
 #include "message.h"
@@ -64,6 +65,9 @@ void Base::set_frequency(char freq1, char freq2) {
 }
 
 void Base::initialize() {
+  assert(!m_initialized);
+  assert(m_dev == nullptr);
+
   if (hid_init() != 0) {
     throw PollException("hid_init() failed");
   }

@@ -1,6 +1,7 @@
 #ifndef BASE_H
 #define BASE_H
 
+#include <vector>
 #include <hidapi.h>
 
 // Encapsulation of iClicker base station
