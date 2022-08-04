@@ -1,16 +1,17 @@
-CXXFLAGS = -g -Wall
+CXXFLAGS = -g -Wall -I/usr/include/hidapi
 CXX = g++
 
-SRCS = poll.cpp
+SRCS = poll.cpp main.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o
 
-all : $(OBJS)
+freepoll : $(OBJS)
+	$(CXX) -o $@ $(OBJS) -lhidapi-libusb
 
 clean :
-	rm -f *.o
+	rm -f *.o freepoll
 
 depend :
 	$(CXX) $(CXXFLAGS) -M $(SRCS) > depend.mak
