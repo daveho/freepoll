@@ -4,7 +4,7 @@ This is a highly-experimental attempt to create an open source client program
 for the [iClicker](https://www.iclicker.com/) system for classroom
 polling.
 
-Clickers are widely as a way of implementing
+Clickers are widely used as a way of implementing
 [Peer Instruction](https://mazur.harvard.edu/research-areas/peer-instruction)
 in college courses.
 
@@ -70,10 +70,29 @@ production use.
 I would *like* to add a simple GUI so that FreePoll is roughly equivalent
 to iClicker classic.
 
-Right now FreePoll only runs on Linux. The way that timestamps are collected
-uses POSIX APIs.  However, I don't see any reason not to at least try to
-make it cross platform, so perhaps in the future it will run on Windows
-and or MacOS.
+I am endeavoring to make FreePoll completely portable. Right now it
+is written in (theoretically) portable C++, other than the reliance
+on libusb/hidapi.
+
+# Compilation
+
+On Linux, you will need the libusb/hidapi development package to be installed.
+On Debian or Ubuntu:
+
+```
+sudo apt install libhidapi-dev
+```
+
+You'll also need `g++` and `make`.
+
+To compile the program:
+
+```
+make depend
+make
+```
+
+The executable is called `freepoll`.
 
 ## License
 

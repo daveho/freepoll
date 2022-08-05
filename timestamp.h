@@ -18,24 +18,21 @@
 #ifndef TIMESTAMP_H
 #define TIMESTAMP_H
 
-#include <ctime>
+#include <chrono>
 #include <stdexcept>
 #include "datatypes.h"
 
 namespace ts {
 
-inline Timestamp timespec_to_timestamp(const struct timespec &tspec) {
-  Timestamp ts = tspec.tv_sec * 1000;
-  ts += (tspec.tv_nsec / 1000);
-  return ts;
-}
-
-inline Timestamp get_timestamp(clockid_t clk_id) {
-  struct timespec tspec;
-  if (clock_gettime(clk_id, &tspec) != 0) {
-    throw std::runtime_error("clock_gettime failed");
-  }
-  return timespec_to_timestamp(tspec);
+// Get milliseconds since epoch. Note that until C++20, the
+// epoch isn't specified. We just assume it is the Unix epoch,
+// but this assumption might need to be revisited on non-Linux
+// platforms.
+inline Timestamp millis_since_epoch() {
+  const auto now    = std::chrono::system_clock::now();
+  const auto epoch  = now.time_since_epoch();
+  const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(epoch);
+  return Timestamp(millis.count());
 }
 
 }
