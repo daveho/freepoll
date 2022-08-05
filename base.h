@@ -28,8 +28,10 @@ public:
   void initialize();
 
 private:
-  void send(const Message &msg);
-  void sleep(double sec);
+  void synchronous_send(const Message &msg, unsigned timeout_millis);
+  void raw_send(const Message &msg);
+  void receive(Message &msg, unsigned timeout_millis);
+  void sleep(unsigned millis);
   void send_command_sequence(const std::vector<Message> &cmd_seq);
 
   void send_set_frequency();

@@ -1,5 +1,6 @@
 #include <cassert>
 #include <vector>
+#include <memory>
 #include "exception.h"
 #include "message.h"
 #include "base.h"
@@ -85,17 +86,75 @@ void Base::initialize() {
   send_command_sequence(INIT_COMMAND_SEQUENCE_B);
 }
 
-void Base::send(const Message &msg) {
-  // TODO
+// Send a message and expect a response containing the first two
+// bytes of the data sent.
+void Base::synchronous_send(const Message &msg, unsigned timeout_millis) {
+  // expected response will be the first two bytes of
+  // the message being sent, followed by 0xAA
+  assert(msg.size() >= 2);
+  Message expected_response = {msg.at(0), msg.at(1), 0xAA};
+
+  // send the message
+  raw_send(msg);
+
+  // receive the response and check whether it contains the expected data
+  Message response;
+  receive(response, timeout_millis);
+  if (response != expected_response) {
+    throw PollException("did not receive expected response data (received " + response.str() + ")");
+  }
 }
 
-void Base::sleep(double sec) {
+void Base::raw_send(const Message &msg) {
+  assert(m_dev != nullptr);
+
+  // From the hid_write documentation:
+  //
+  //  "The first byte of @p data[] must contain the Report ID. For
+  //  devices which only support a single report, this must be set
+  //  to 0x0."
+
+  Message msg_to_send;
+  msg_to_send += UC(0);
+  msg_to_send += msg;
+
+  assert(msg_to_send.size() == msg.size() + 1);
+
+  // TODO: should think about how to make this nonblocking?
+  int n = hid_write(m_dev, msg_to_send.data(), msg_to_send.size());
+
+  if (n != int(msg_to_send.size())) {
+    throw PollException("failed to write all data");
+  }
+}
+
+void Base::receive(Message &msg, unsigned timeout_millis) {
+  assert(m_dev != nullptr);
+
+  // iclickerpoll.py always attempts to read 64 bytes,
+  // presumably we will get just one packet?
+  // (The hid_read_timeout() documentation says it will read
+  // "an Input report".)
+  std::unique_ptr<UC> buf(new UC[64]);
+
+  int n = hid_read_timeout(m_dev, buf.get(), 64, int(timeout_millis));
+  if (n < 0) {
+    throw PollException("failed to read data from device");
+  }
+  if (n == 0) {
+    throw PollException("timeout reading data from device");
+  }
+
+  msg.set_data(buf.get(), unsigned(n));
+}
+
+void Base::sleep(unsigned millis) {
   // TODO
 }
 
 void Base::send_command_sequence(const std::vector<Message> &cmd_seq) {
   for (auto i = cmd_seq.begin(); i != cmd_seq.end(); ++i) {
-    send(*i);
+    raw_send(*i);
   }
 }
 
@@ -103,18 +162,18 @@ void Base::send_set_frequency() {
   // set the base station frequency
 
   Message msg1 = {0x01, 0x10, UC(0x21 + (m_freq1 - 'a')), UC(0x41 + (m_freq2 - 'a'))};
-  sleep(0.2);
-  send(msg1);
+  sleep(200);
+  synchronous_send(msg1, 100);
 
   Message msg2 = {0x01, 0x16};
-  sleep(0.2);
-  send(msg2);
+  sleep(200);
+  synchronous_send(msg2, 100);
 
-  sleep(0.2);
+  sleep(200);
 }
 
 void Base::send_set_protocol_version() {
   Message msg = {0x01, 0x2d};
-  send(msg);
-  sleep(0.2);
+  raw_send(msg);
+  sleep(200);
 }
