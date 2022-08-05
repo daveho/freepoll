@@ -31,8 +31,10 @@ public:
 
   void set_data(const unsigned char *data, unsigned num_bytes);
 
+#if 0
   bool operator==(const Message &rhs) const { return m_bytes == rhs.m_bytes; }
   bool operator!=(const Message &rhs) const { return !(m_bytes == rhs.m_bytes); }
+#endif
 
   std::string str() const;
 };

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <iostream>
 #include <vector>
 #include <memory>
 #include "exception.h"
@@ -89,10 +90,7 @@ void Base::initialize() {
 // Send a message and expect a response containing the first two
 // bytes of the data sent.
 void Base::synchronous_send(const Message &msg, unsigned timeout_millis) {
-  // expected response will be the first two bytes of
-  // the message being sent, followed by 0xAA
   assert(msg.size() >= 2);
-  Message expected_response = {msg.at(0), msg.at(1), 0xAA};
 
   // send the message
   raw_send(msg);
@@ -100,7 +98,13 @@ void Base::synchronous_send(const Message &msg, unsigned timeout_millis) {
   // receive the response and check whether it contains the expected data
   Message response;
   receive(response, timeout_millis);
-  if (response != expected_response) {
+
+  // expected response will be the first two bytes of
+  // the message being sent, followed by 0xAA
+  if (   response.size() < 3
+      || response.at(0) != msg.at(0)
+      || response.at(1) != msg.at(1)
+      || response.at(2) != 0xAA) {
     throw PollException("did not receive expected response data (received " + response.str() + ")");
   }
 }
@@ -144,6 +148,7 @@ void Base::receive(Message &msg, unsigned timeout_millis) {
   if (n == 0) {
     throw PollException("timeout reading data from device");
   }
+  std::cout << "received " << n << " byte(s)\n";
 
   msg.set_data(buf.get(), unsigned(n));
 }
