@@ -17,12 +17,16 @@
 
 #include <cassert>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <memory>
 #include <chrono>
 #include <thread>
 #include <utility>
 #include <set>
+#include <map>
+#include <algorithm>
+#include <numeric>
 #include "exception.h"
 #include "message.h"
 #include "datatypes.h"
@@ -105,7 +109,7 @@ void decode_response(const unsigned char *data, std::vector<RawResponse> &respon
 }
 
 void unpack_responses(const Message &data, std::vector<RawResponse> &responses) {
-  std::cout << "Unpacking: " << data.str() << "\n";
+  //std::cout << "Unpacking: " << data.str() << "\n";
 
   // there could be up to two responses
   if (data.size() >= 32) {
@@ -114,6 +118,59 @@ void unpack_responses(const Message &data, std::vector<RawResponse> &responses) 
   if (data.size() >= 64) {
     decode_response(data.data() + 32, responses);
   }
+}
+
+std::string analyze_responses(const std::map<RemoteID, Option> &current_responses) {
+  unsigned counts[5] = { 0 };
+  unsigned total_resp = 0;
+
+  // count responses
+  for (auto i = current_responses.begin(); i != current_responses.end(); ++i) {
+    int index = int(i->second);
+    assert(index >= 0 && index <= 4);
+    counts[index]++;
+    total_resp++;
+  }
+
+  // special case: if there aren't any responses, all percentages are 0
+  if (total_resp == 0) {
+    return " 0  0  0  0  0  ";
+  }
+
+  // compute the percentage of the total responses for each Option,
+  // and also determine how far from the next highest integer
+  // each percentage is
+  double percentages[5], to_next_int[5];
+  for (int i = 0; i < 5; i++) {
+    double percentage_exact = (double(counts[i]) / total_resp) * 100.0;
+    double to_next_lower = percentage_exact - int(percentage_exact);
+    // how much needs to be added to get to the next higher integer
+    to_next_int[i] = 1.0 - to_next_lower;
+    // record the integer percentage
+    percentages[i] = int(percentage_exact);
+  }
+
+  // keep rounding up the percentages that are closer to the next
+  // higher integer until the percentages sum to 100
+  while (std::accumulate(percentages, percentages+5, 0.0) < 100.0) {
+    auto i = std::min_element(to_next_int, to_next_int + 5);
+    int index = i - to_next_int;
+    percentages[index] += 1.0; // round up
+    to_next_int[index] = 1.0;
+  }
+
+  // format the (now rounded) percentages
+  std::stringstream ss;
+  for (int i = 0; i < 5; i++) {
+    int ipct = int(percentages[i]);
+    if (ipct == 100) {
+      ss << "100";
+    } else {
+      ss << std::setw(2) << ipct << " ";
+    }
+  }
+  ss << " ";
+  return ss.str();
 }
 
 const unsigned VENDOR_ID = 0x1881;
@@ -156,6 +213,8 @@ const char *greeting_text[] = {
   "    FreePoll    ",
   "     v " FREEPOLL_VERSION "     ",
 };
+
+const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 500;
 
 } // end anonymous namespace
 
@@ -245,7 +304,15 @@ void Base::collect_responses(volatile const bool &stop, ResponseCallback *respon
   // previously-sent responses. Only send new unique responses
   // to the callback.
 
+  sleep(100);
+  set_screen(" A  B  C  D  E  ", 0);
+  sleep(100);
+  set_screen("                ", 1);
+
+  auto last_screen_update = std::chrono::steady_clock::now();
+
   std::set<RawResponse> received;
+  std::map<RemoteID, Option> current_responses;
 
   while (!stop) {
     Message data;
@@ -262,12 +329,26 @@ void Base::collect_responses(volatile const bool &stop, ResponseCallback *respon
           // note that we've received it
           response_callback->on_response(response.remote_id, response.option);
           received.insert(response);
+          current_responses[response.remote_id] = response.option;
         }
       }
     }
 
-    // TODO: update display to summarize responses?
+    auto current_time = std::chrono::steady_clock::now();
+    auto elapsed_millis = std::chrono::duration_cast<std::chrono::milliseconds>(current_time - last_screen_update);
+    if (elapsed_millis.count() >= SCREEN_UPDATE_INTERVAL_MILLIS) {
+      //std::cout << "update screen\n";
+      std::string percentages = analyze_responses(current_responses);
+      //std::cout << "Updated percentages: " << percentages << "\n";
+      set_screen(percentages, 1);
+      last_screen_update = current_time;
+    }
   }
+
+  // do one last screen update
+  sleep(200);
+  std::string percentages = analyze_responses(current_responses);
+  set_screen(percentages, 1);
 }
 
 // Send a message and expect a response containing the first two
