@@ -19,6 +19,7 @@ public:
   Message &operator=(const Message &rhs);
 
   unsigned size() const { return unsigned(m_bytes.size()); }
+  bool empty() const { return m_bytes.empty(); }
 
   unsigned char &at(unsigned i)      { return m_bytes.at(i); }
   unsigned char at(unsigned i) const { return m_bytes.at(i); }
@@ -28,6 +29,8 @@ public:
 
   Message &operator+=(unsigned char byte);
   Message &operator+=(const Message &rhs);
+
+  void clear() { m_bytes.clear(); }
 
   void set_data(const unsigned char *data, unsigned num_bytes);
 

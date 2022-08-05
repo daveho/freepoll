@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <hidapi.h>
+#include "response_callback.h"
 
 // Encapsulation of iClicker base station
 
@@ -19,9 +20,13 @@ private:
   Base(const Base &);
   Base &operator=(const Base &);
 
-  typedef unsigned char UC;
-
 public:
+  enum PollType {
+    ALPHA        = 0x66 + 0,
+    NUMERIC      = 0x66 + 1,
+    ALPHANUMERIC = 0x66 + 2,
+  };
+
   Base();
   ~Base();
 
@@ -29,6 +34,10 @@ public:
   void initialize();
 
   void set_screen(const std::string &s, unsigned line);
+  void start_poll(PollType poll_type);
+  void stop_poll();
+
+  void collect_responses(volatile const bool &stop, ResponseCallback *response_callback);
 
 private:
   void synchronous_send(const Message &msg, unsigned timeout_millis);
@@ -39,6 +48,7 @@ private:
 
   void send_set_frequency();
   void send_set_protocol_version();
+  void send_set_poll_type(PollType poll_type);
 };
 
 #endif // BASE_H

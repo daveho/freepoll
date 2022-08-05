@@ -21,9 +21,7 @@ void Poll::record_response(RemoteID remote_id, Option option) {
   Response resp(remote_id, option, m_start_wall + offset);
 
   // Find vector of Response objects for the specified RemoteID
-  auto i = m_responses.find(remote_id);
-  std::vector<Response> &responses_for_remote_id =
-    (i == m_responses.end()) ? m_responses[remote_id] : i->second;
+  std::vector<Response> &responses_for_remote_id = m_responses[remote_id];
 
   // Store the Response
   responses_for_remote_id.push_back(resp);

@@ -4,40 +4,46 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include "response_callback.h"
 #include "base.h"
 
-std::string hexstr(unsigned val) {
+// this is just for testing
+class PrintResponses : public ResponseCallback {
+private:
+  PrintResponses(const PrintResponses &);
+  PrintResponses &operator=(const PrintResponses &);
+
+public:
+  PrintResponses();
+  virtual ~PrintResponses();
+
+  virtual void on_response(RemoteID remote_id, Option option);
+};
+
+PrintResponses::PrintResponses() {
+}
+
+PrintResponses::~PrintResponses() {
+}
+
+void PrintResponses::on_response(RemoteID remote_id, Option option) {
   std::stringstream ss;
-  ss << std::hex << val;
-  return ss.str();
+  ss << std::hex;
+  ss << "RemoteID:" << remote_id << ", option=" << char('A' + int(option));
+  std::cout << ss.str() << "\n";
+}
+
+namespace {
+
+void watch_poll(Base *base, ResponseCallback *response_callback, volatile const bool *stop) {
+  base->start_poll(Base::ALPHA);
+  base->collect_responses(*stop, response_callback);
+  base->stop_poll();
+}
+
 }
 
 int main() {
-#if 0
-  // Some of this code is adapted from the hidapi test program,
-  // https://github.com/libusb/hidapi/blob/master/hidtest/test.c
-
-  struct hid_device_info *devs, *cur_dev;
-
-  if (hid_init() != 0) {
-    std::cerr << "hid_init() failed\n";
-    return 1;
-  }
-
-  devs = hid_enumerate(0x0, 0x0);
-  cur_dev = devs;
-
-  while (cur_dev != nullptr) {
-    std::cout << "Device found: type=" << hexstr(cur_dev->vendor_id)
-              << " " << hexstr(cur_dev->product_id)
-              << ", path=" << cur_dev->path
-              << "\n";
-    cur_dev = cur_dev->next;
-  }
-
-  hid_free_enumeration(devs);
-#endif
-
   std::unique_ptr<Base> base(new Base());
   base->initialize();
 
@@ -48,6 +54,25 @@ int main() {
 
   base->set_screen("ARE BELONG TO US", 1);
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  PrintResponses print_responses;
+  std::thread *poll_watcher = nullptr;
+  bool stop = false; // will control when poll stops
+
+  bool done = false;
+  std::string line;
+  while (!done && std::getline(std::cin, line)) {
+    if (line == "start" && poll_watcher == nullptr) {
+      std::cout << "starting poll...\n";
+      poll_watcher = new std::thread( watch_poll, base.get(), &print_responses, &stop);
+    } else if (line == "stop" && poll_watcher != nullptr) {
+      stop = true;
+      poll_watcher->join();
+      delete poll_watcher;
+      std::cout << "poll finished\n";
+      done = true;
+    }
+  }
 
   return 0;
 }

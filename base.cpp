@@ -4,8 +4,10 @@
 #include <memory>
 #include <chrono>
 #include <thread>
+#include <utility>
 #include "exception.h"
 #include "message.h"
+#include "datatypes.h"
 #include "base.h"
 
 // This code is a derived from iclickerpoll.py:
@@ -18,10 +20,48 @@
 // because the original is licensed under GPL 3.0 (copyright Jason Siefken),
 // and this code is also licensed under GPL 3.0.
 
+
+typedef unsigned char UC;
+
 namespace {
 
 bool is_valid_freq_char(char c) {
   return c >= 'a' && c <= 'e';
+}
+
+void decode_response(const unsigned char *data, std::vector<std::pair<RemoteID, Option>> &responses) {
+  if (data[0] == 0x02 && data[1] == 0x13) {
+    // this is an alpha clicker response
+
+    Message as_msg;
+    as_msg.set_data(data, 32);
+    std::cout << "decoding response: " << as_msg.str() << "\n";
+
+    // decode the remote ID
+    RemoteID remote_id = 0;
+    for (unsigned i = 0; i < 3; i++) {
+      remote_id |= data[i + 3];
+      remote_id <<= 8;
+    }
+    // LSB of remote ID is the exclusive OR of the three data bytes
+    remote_id |= UC(data[3] ^ data[4] ^ data[5]);
+
+    // decode the selected option
+    // A=0x81, B=0x82, etc.
+    Option option = Option(data[2] - 0x81);
+
+    responses.push_back({ remote_id, option });
+  }
+}
+
+void unpack_responses(const Message &data, std::vector<std::pair<RemoteID, Option>> &responses) {
+  // there could be up to two responses
+  if (data.size() >= 32) {
+    decode_response(data.data() + 0, responses);
+  }
+  if (data.size() >= 64) {
+    decode_response(data.data() + 32, responses);
+  }
 }
 
 const unsigned VENDOR_ID = 0x1881;
@@ -39,6 +79,23 @@ const std::vector<Message> INIT_COMMAND_SEQUENCE_B = {
   Message("01 17 04"),
   Message("01 17 03"),
   Message("01 16"),
+};
+
+const std::vector<Message> START_POLL_COMMAND_SEQUENCE_A = {
+  Message("01 17 03"),
+  Message("01 17 05"),
+};
+
+const std::vector<Message> START_POLL_COMMAND_SEQUENCE_B = {
+  Message("01 11"),
+};
+
+const std::vector<Message> STOP_POLL_COMMAND_SEQUENCE_A = {
+  Message("01 12"),
+  Message("01 16"),
+  Message("01 17 01"),
+  Message("01 17 03"),
+  Message("01 17 04"),
 };
 
 } // end anonymous namespace
@@ -102,6 +159,37 @@ void Base::set_screen(const std::string &s, unsigned line) {
   raw_send(cmd);
 }
 
+void Base::start_poll(PollType poll_type) {
+  send_command_sequence(START_POLL_COMMAND_SEQUENCE_A);
+  send_set_poll_type(poll_type);
+  send_command_sequence(START_POLL_COMMAND_SEQUENCE_B);
+
+  // TODO: clear the display in preparation for summarizing responses?
+}
+
+void Base::stop_poll() {
+  send_command_sequence(STOP_POLL_COMMAND_SEQUENCE_A);
+}
+
+// Poll for received responses until stop is true.
+// Obviously, this should be run in its own thread
+// (because stop will be set to true asynchronously.)
+void Base::collect_responses(volatile const bool &stop, ResponseCallback *response_callback) {
+  while (!stop) {
+    Message data;
+    receive(data, 100);
+    if (!data.empty()) {
+      std::vector<std::pair<RemoteID, Option>> responses;
+      unpack_responses(data, responses);
+      for (auto i = responses.begin(); i != responses.end(); ++i) {
+        response_callback->on_response(i->first, i->second);
+      }
+    }
+
+    // TODO: update display to summarize responses?
+  }
+}
+
 // Send a message and expect a response containing the first two
 // bytes of the data sent. This only seems to be necessary when
 // setting the frequency.
@@ -162,9 +250,11 @@ void Base::receive(Message &msg, unsigned timeout_millis) {
     throw PollException("failed to read data from device");
   }
   if (n == 0) {
-    throw PollException("timeout reading data from device");
+    // timeout: this is signified by clearing the message data
+    msg.clear();
+    return;
   }
-  std::cout << "received " << n << " byte(s)\n";
+  //std::cout << "received " << n << " byte(s)\n";
 
   msg.set_data(buf.get(), unsigned(n));
 }
@@ -196,5 +286,14 @@ void Base::send_set_frequency() {
 void Base::send_set_protocol_version() {
   Message msg = {0x01, 0x2d};
   raw_send(msg);
+  sleep(200);
+}
+
+void Base::send_set_poll_type(PollType poll_type) {
+  assert(   poll_type == ALPHA
+         || poll_type == NUMERIC
+         || poll_type == ALPHANUMERIC);
+  Message cmd = {0x01, 0x19, UC(poll_type), 0x0a, 0x01};
+  raw_send(cmd);
   sleep(200);
 }
