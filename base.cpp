@@ -1,3 +1,20 @@
+// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+
+// This file is part of FreePoll.
+//
+// FreePoll is free software: you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option)
+// any later version.
+//
+// FreePoll is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with FreePoll. If not, see <https://www.gnu.org/licenses/>.
+
 #include <cassert>
 #include <iostream>
 #include <vector>
@@ -20,7 +37,6 @@
 // So, this should be considered a derived work, which is fine,
 // because the original is licensed under GPL 3.0 (copyright Jason Siefken),
 // and this code is also licensed under GPL 3.0.
-
 
 typedef unsigned char UC;
 
@@ -109,7 +125,7 @@ const std::vector<Message> INIT_COMMAND_SEQUENCE_A = {
   Message("01 15"),
   Message("01 16"),
 };
- 
+
 const std::vector<Message> INIT_COMMAND_SEQUENCE_B = {
   Message("01 29 a1 8f 96 8d 99 97 8f"),
   Message("01 17 04"),
@@ -132,6 +148,13 @@ const std::vector<Message> STOP_POLL_COMMAND_SEQUENCE_A = {
   Message("01 17 01"),
   Message("01 17 03"),
   Message("01 17 04"),
+};
+
+#define FREEPOLL_VERSION "0.00"
+
+const char *greeting_text[] = {
+  "    FreePoll    ",
+  "     v " FREEPOLL_VERSION "     ",
 };
 
 } // end anonymous namespace
@@ -180,6 +203,13 @@ void Base::initialize() {
   send_command_sequence(INIT_COMMAND_SEQUENCE_A);
   send_set_protocol_version();
   send_command_sequence(INIT_COMMAND_SEQUENCE_B);
+
+  // display greeting text
+  for (int i = 0; i < 2; i++) {
+    sleep(100);
+    set_screen(greeting_text[i], i);
+  }
+  sleep(100);
 }
 
 void Base::set_screen(const std::string &s, unsigned line) {
