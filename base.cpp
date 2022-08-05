@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <utility>
+#include <set>
 #include "exception.h"
 #include "message.h"
 #include "datatypes.h"
@@ -23,20 +24,50 @@
 
 typedef unsigned char UC;
 
+struct RawResponse {
+  RemoteID remote_id;
+  Option option;
+  int seq_num;
+
+  RawResponse()
+    { }
+  RawResponse(RemoteID remote_id, Option option, int seq_num)
+    : remote_id(remote_id), option(option), seq_num(seq_num)
+    { }
+
+  bool operator==(const RawResponse &rhs) const {
+    return remote_id == rhs.remote_id
+        && option == rhs.option
+        && seq_num == rhs.seq_num;
+  }
+
+  bool operator!=(const RawResponse &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator<(const RawResponse &rhs) const {
+    if (remote_id < rhs.remote_id) return true;
+    if (remote_id > rhs.remote_id) return false;
+    if (option < rhs.option) return true;
+    if (option > rhs.option) return false;
+    return seq_num < rhs.seq_num;
+  }
+};
+
 namespace {
 
 bool is_valid_freq_char(char c) {
   return c >= 'a' && c <= 'e';
 }
 
-void decode_response(const unsigned char *data, std::vector<std::pair<RemoteID, Option>> &responses) {
+void decode_response(const unsigned char *data, std::vector<RawResponse> &responses) {
   if (data[0] == 0x02 && data[1] == 0x13) {
     // this is an alpha clicker response
-
+#if 0
     Message as_msg;
     as_msg.set_data(data, 32);
     std::cout << "decoding response: " << as_msg.str() << "\n";
-
+#endif
     // decode the remote ID
     RemoteID remote_id = 0;
     for (unsigned i = 0; i < 3; i++) {
@@ -50,11 +81,16 @@ void decode_response(const unsigned char *data, std::vector<std::pair<RemoteID, 
     // A=0x81, B=0x82, etc.
     Option option = Option(data[2] - 0x81);
 
-    responses.push_back({ remote_id, option });
+    // get the sequence number
+    int seq_num = data[6];
+
+    responses.push_back({ remote_id, option, seq_num });
   }
 }
 
-void unpack_responses(const Message &data, std::vector<std::pair<RemoteID, Option>> &responses) {
+void unpack_responses(const Message &data, std::vector<RawResponse> &responses) {
+  std::cout << "Unpacking: " << data.str() << "\n";
+
   // there could be up to two responses
   if (data.size() >= 32) {
     decode_response(data.data() + 0, responses);
@@ -175,14 +211,28 @@ void Base::stop_poll() {
 // Obviously, this should be run in its own thread
 // (because stop will be set to true asynchronously.)
 void Base::collect_responses(volatile const bool &stop, ResponseCallback *response_callback) {
+  // For whatever reason, the base station sends repeats of
+  // previously-sent responses. Only send new unique responses
+  // to the callback.
+
+  std::set<RawResponse> received;
+
   while (!stop) {
     Message data;
     receive(data, 100);
     if (!data.empty()) {
-      std::vector<std::pair<RemoteID, Option>> responses;
+      std::vector<RawResponse> responses;
       unpack_responses(data, responses);
       for (auto i = responses.begin(); i != responses.end(); ++i) {
-        response_callback->on_response(i->first, i->second);
+        const RawResponse &response = *i;
+
+        // check whether this response is new
+        if (received.count(response) == 0) {
+          // response is new: deliver it to the callback, and
+          // note that we've received it
+          response_callback->on_response(response.remote_id, response.option);
+          received.insert(response);
+        }
       }
     }
 
@@ -266,6 +316,8 @@ void Base::sleep(unsigned millis) {
 void Base::send_command_sequence(const std::vector<Message> &cmd_seq) {
   for (auto i = cmd_seq.begin(); i != cmd_seq.end(); ++i) {
     raw_send(*i);
+    Message response;
+    receive(response, 100);
   }
 }
 
