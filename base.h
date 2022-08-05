@@ -2,6 +2,7 @@
 #define BASE_H
 
 #include <vector>
+#include <string>
 #include <hidapi.h>
 
 // Encapsulation of iClicker base station
@@ -26,6 +27,8 @@ public:
 
   void set_frequency(char freq1, char freq2);
   void initialize();
+
+  void set_screen(const std::string &s, unsigned line);
 
 private:
   void synchronous_send(const Message &msg, unsigned timeout_millis);

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <chrono>
+#include <thread>
 #include "exception.h"
 #include "message.h"
 #include "base.h"
@@ -87,8 +89,22 @@ void Base::initialize() {
   send_command_sequence(INIT_COMMAND_SEQUENCE_B);
 }
 
+void Base::set_screen(const std::string &s, unsigned line) {
+  assert(line < 2);
+  assert(s.size() <= 16);
+  Message cmd = {0x01, (line == 0) ? UC(0x13) : UC(0x14)};
+  for (unsigned i = 0; i < s.size(); i++) { // append characters
+    cmd += UC(s[i]);
+  }
+  for (unsigned i = 0; i < 16 - s.size(); i++) { // pad to length 16
+    cmd += UC(' ');
+  }
+  raw_send(cmd);
+}
+
 // Send a message and expect a response containing the first two
-// bytes of the data sent.
+// bytes of the data sent. This only seems to be necessary when
+// setting the frequency.
 void Base::synchronous_send(const Message &msg, unsigned timeout_millis) {
   assert(msg.size() >= 2);
 
@@ -154,7 +170,7 @@ void Base::receive(Message &msg, unsigned timeout_millis) {
 }
 
 void Base::sleep(unsigned millis) {
-  // TODO
+  std::this_thread::sleep_for(std::chrono::milliseconds(millis));
 }
 
 void Base::send_command_sequence(const std::vector<Message> &cmd_seq) {

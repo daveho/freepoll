@@ -2,6 +2,8 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include <chrono>
+#include <thread>
 #include "base.h"
 
 std::string hexstr(unsigned val) {
@@ -40,6 +42,12 @@ int main() {
   base->initialize();
 
   std::cout << "initialized base?\n";
+
+  base->set_screen(" ALL YOUR BASE  ", 0);
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  base->set_screen("ARE BELONG TO US", 1);
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
   return 0;
 }
