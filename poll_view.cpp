@@ -17,10 +17,17 @@
 
 #include <iostream>
 #include <wx/button.h>
+#include <wx/bitmap.h>
 #include "poll_view.h"
-//#include "play_button_icon.h"
+#include "play_button_icon.h"
+
+namespace {
 
 const int PLAY_STOP_BUTTON = 100;
+
+wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
+
+}
 
 PollView::PollView(wxWindow *parent)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
@@ -28,6 +35,7 @@ PollView::PollView(wxWindow *parent)
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
   wxButton *poll_control_btn = new wxButton(this, PLAY_STOP_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
+  poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
   items->Add(poll_control_btn);
 
   SetSizer(items);
