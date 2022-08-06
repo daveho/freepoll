@@ -31,4 +31,7 @@ enum class Option {
 // timestamp: milliseconds since the Unix epoch
 typedef uint64_t Timestamp;
 
+// Version string
+#define FREEPOLL_VERSION "0.00"
+
 #endif // DATATYPES_H

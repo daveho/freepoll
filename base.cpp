@@ -207,8 +207,6 @@ const std::vector<Message> STOP_POLL_COMMAND_SEQUENCE_A = {
   Message("01 17 04"),
 };
 
-#define FREEPOLL_VERSION "0.00"
-
 const char *greeting_text[] = {
   "    FreePoll    ",
   "     v " FREEPOLL_VERSION "     ",

@@ -18,6 +18,8 @@ GUI_LIBS = -lhidapi-libusb $(shell wx-config --libs)
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o
 
+all : freepoll freepoll-gui
+
 freepoll : $(TUI_OBJS) $(COMMON_OBJS)
 	$(CXX) -o $@ $(TUI_OBJS) $(COMMON_OBJS) $(TUI_LIBS)
 
