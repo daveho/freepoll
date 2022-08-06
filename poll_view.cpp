@@ -21,6 +21,8 @@
 #include "poll_view.h"
 #include "play_button_icon.h"
 #include "stop_button_icon.h"
+#include "timer.h"
+#include "timer_view.h"
 
 namespace {
 
@@ -33,7 +35,8 @@ wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
 PollView::PollView(wxWindow *parent)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
-  , m_poll(nullptr) {
+  , m_poll(nullptr)
+  , m_timer(new Timer()) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
   items->AddSpacer(10);
@@ -43,10 +46,20 @@ PollView::PollView(wxWindow *parent)
 
   items->Add(m_poll_control_btn, 0, wxALL|wxALIGN_CENTRE);
 
+  items->AddSpacer(10);
+
+  m_timer_view = new TimerView(this, m_timer);
+  items->Add(m_timer_view, 0, wxALL|wxALIGN_CENTRE);
+
+  m_timer->add_observer(m_timer_view);
+
   SetSizer(items);
 }
 
 PollView::~PollView() {
+  m_timer->remove_observer(m_timer_view);
+
+  delete m_timer;
 }
 
 void PollView::on_update(Observable *observable, int hint) {
@@ -56,12 +69,22 @@ void PollView::on_update(Observable *observable, int hint) {
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
   std::cout << "button pressed!\n";
 
+/*
   static int x = 0;
   if (x == 0)
     m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
   else
     m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
   x = !x;
+*/
+
+  if (!m_timer->is_running()) {
+    m_timer->start();
+    m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
+  } else {
+    m_timer->stop();
+    m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
+  }
 }
 
 wxBEGIN_EVENT_TABLE(PollView, wxPanel)

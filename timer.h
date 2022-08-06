@@ -15,34 +15,44 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef POLL_VIEW_H
-#define POLL_VIEW_H
+#ifndef TIMER_H
+#define TIMER_H
 
-#include <wx/panel.h>
-#include <wx/button.h>
-#include "observer.h"
+#include <thread>
+#include <mutex>
+#include "observable.h"
 
-class Poll;
-class Timer;
-class TimerView;
-
-class PollView : public wxPanel, public Observer {
+class Timer : public Observable {
 private:
-  Poll *m_poll;
-  Timer *m_timer;
-  wxButton *m_poll_control_btn;
-  TimerView *m_timer_view;
+  std::thread *m_timer_thread;
+  volatile unsigned m_num_seconds;
+  volatile bool m_stop;
+  mutable std::mutex m_lock;
+
+  // value semantics are prohibited
+  Timer(const Timer &);
+  Timer &operator=(const Timer &);
 
 public:
-  PollView(wxWindow *parent);
-  virtual ~PollView();
+  // notification hints
+  enum {
+    TIMER_STARTED,
+    NUM_SECONDS_UPDATED,
+    TIMER_STOPPED,
+  };
 
-  virtual void on_update(Observable *observable, int hint);
+  Timer();
+  virtual ~Timer();
+
+  void start();
+  void stop();
+
+  bool is_running() const;
+
+  unsigned get_num_seconds() const;
 
 private:
-  void on_play_stop_button(wxCommandEvent &evt);
-
-  wxDECLARE_EVENT_TABLE();
+  static void run(Timer *timer);
 };
 
-#endif // POLL_VIEW_H
+#endif // TIMER_H
