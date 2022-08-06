@@ -33,8 +33,9 @@ wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
 }
 
-PollView::PollView(wxWindow *parent)
+PollView::PollView(wxWindow *parent, Base *base)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
+  , m_base(base)
   , m_poll(nullptr)
   , m_timer(new Timer()) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
@@ -68,15 +69,6 @@ void PollView::on_update(Observable *observable, int hint) {
 
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
   std::cout << "button pressed!\n";
-
-/*
-  static int x = 0;
-  if (x == 0)
-    m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
-  else
-    m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
-  x = !x;
-*/
 
   if (!m_timer->is_running()) {
     m_timer->start();

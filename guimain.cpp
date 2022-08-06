@@ -15,12 +15,16 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include <iostream>
+
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
   #include <wx/wx.h>
 #endif
 
 #include "datatypes.h"
+#include "base.h"
+#include "exception.h"
 #include "poll_view.h"
 
 class FreePollApp: public wxApp
@@ -35,7 +39,7 @@ private:
   PollView *m_poll_view;
 
 public:
-  FreePollFrame(const wxString& title);
+  FreePollFrame(const wxString& title, Base *base);
 
 private:
   void OnExit(wxCommandEvent& event);
@@ -50,15 +54,27 @@ wxIMPLEMENT_APP(FreePollApp);
 
 bool FreePollApp::OnInit()
 {
-  FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION );
+  Base *base = new Base();
+
+  // FIXME: it would be nice to have a more dynamic way to connect to the base
+  // (e.g., periodically trying to connect to it, so that the program could
+  // detect if the base is plugged in while the program is running)
+  try {
+    base->initialize();
+  } catch (PollException &ex) {
+    std::cerr << "Could not initialize base station: " << ex.what() << "\n";
+    return false;
+  }
+
+  FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION, base );
   frame->Show( true );
   return true;
 }
 
-FreePollFrame::FreePollFrame(const wxString& title)
+FreePollFrame::FreePollFrame(const wxString& title, Base *base)
   : wxFrame(NULL, wxID_ANY, title)
 {
-  m_poll_view = new PollView(this);
+  m_poll_view = new PollView(this, base);
   //m_poll_view->SetBackgroundColour(wxColour(*wxBLUE));
 
   Fit();
@@ -66,5 +82,7 @@ FreePollFrame::FreePollFrame(const wxString& title)
 
 void FreePollFrame::OnExit(wxCommandEvent& event)
 {
+  // FIXME: should check the PollView to make sure that there is not a poll in progress
+
   Close( true );
 }
