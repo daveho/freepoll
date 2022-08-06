@@ -15,19 +15,32 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include <cassert>
 #include "timestamp.h"
 #include "poll.h"
 
-Poll::Poll() {
+Poll::Poll()
+  : m_started(false)
+  , m_stopped(false) {
 }
 
 void Poll::start() {
-  std::lock_guard<std::mutex> guard(m_lock);
-  m_start_wall = ts::millis_since_epoch();
-  m_start_mono = std::chrono::steady_clock::now();
+  assert(!m_started);
+
+  {
+    std::lock_guard<std::mutex> guard(m_lock);
+    m_started = true;
+    m_start_wall = ts::millis_since_epoch();
+    m_start_mono = std::chrono::steady_clock::now();
+  }
+
+  notify_observers(POLL_STARTED);
 }
 
 void Poll::record_response(RemoteID remote_id, Option option) {
+  assert(m_started);
+  assert(!m_stopped);
+
   {
     std::lock_guard<std::mutex> guard(m_lock);
 
@@ -47,6 +60,28 @@ void Poll::record_response(RemoteID remote_id, Option option) {
   }
 
   notify_observers(RESPONSE_RECORDED);
+}
+
+void Poll::stop() {
+  assert(m_started);
+  assert(!m_stopped);
+
+  {
+    std::lock_guard<std::mutex> guard(m_lock);
+    m_stopped = true;
+  }
+
+  notify_observers(POLL_STOPPED);
+}
+
+bool Poll::is_started() const {
+  std::lock_guard<std::mutex> guard(m_lock);
+  return m_started;
+}
+
+bool Poll::is_stopped() const {
+  std::lock_guard<std::mutex> guard(m_lock);
+  return m_stopped;
 }
 
 Timestamp Poll::get_start_time() const {

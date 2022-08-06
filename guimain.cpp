@@ -9,6 +9,7 @@
 #endif
 
 #include "datatypes.h"
+#include "poll_view.h"
 
 class FreePollApp: public wxApp
 {
@@ -18,8 +19,12 @@ public:
 
 class FreePollFrame: public wxFrame
 {
+private:
+  PollView *m_poll_view;
+
 public:
   FreePollFrame(const wxString& title);
+
 private:
   void OnExit(wxCommandEvent& event);
   wxDECLARE_EVENT_TABLE();
@@ -39,8 +44,12 @@ bool FreePollApp::OnInit()
 }
 
 FreePollFrame::FreePollFrame(const wxString& title)
-    : wxFrame(NULL, wxID_ANY, title)
+  : wxFrame(NULL, wxID_ANY, title)
 {
+  m_poll_view = new PollView(this);
+  //m_poll_view->SetBackgroundColour(wxColour(*wxBLUE));
+
+  Fit();
 }
 
 void FreePollFrame::OnExit(wxCommandEvent& event)

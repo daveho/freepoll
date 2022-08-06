@@ -40,6 +40,8 @@
 // multiple threads.
 class Poll : public Observable {
 private:
+  bool m_started;
+  bool m_stopped;
   std::map<RemoteID, std::vector<Response>> m_responses;
   Timestamp m_start_wall;
   std::chrono::time_point<std::chrono::steady_clock> m_start_mono;
@@ -48,7 +50,9 @@ private:
 public:
   // notification hints
   enum {
+    POLL_STARTED,
     RESPONSE_RECORDED,
+    POLL_STOPPED,
   };
 
   Poll();
@@ -59,6 +63,15 @@ public:
   // record one response, which will be timestamped based on the current
   // (computed) wall clock time
   void record_response(RemoteID remote_id, Option option);
+
+  // call this when the poll stops
+  void stop();
+
+  // return true if the Poll has been started
+  bool is_started() const;
+
+  // return true if the Poll has been stopped
+  bool is_stopped() const;
 
   // Get the poll's start time (as milliseconds since the epoch)
   Timestamp get_start_time() const;

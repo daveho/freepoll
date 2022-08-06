@@ -5,7 +5,7 @@ COMMON_SRCS = poll.cpp base.cpp exception.cpp message.cpp \
 	response_callback.cpp poll_response_collector.cpp observable.cpp \
 	observer.cpp
 TUI_SRCS = main.cpp
-GUI_SRCS = guimain.cpp
+GUI_SRCS = guimain.cpp poll_view.cpp
 
 ALL_SRCS = $(COMMON_SRCS) $(TUI_SRCS) $(GUI_SRCS)
 

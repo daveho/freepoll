@@ -30,7 +30,7 @@ void Observable::add_observer(Observer *observer) {
 }
 
 void Observable::remove_observer(Observer *observer) {
-  auto i = m_observers.find(observer);
+  auto i = std::find(m_observers.begin(), m_observers.end(), observer);
   if (i != m_observers.end()) {
     m_observers.erase(i);
   }
