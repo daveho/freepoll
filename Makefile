@@ -2,7 +2,8 @@ CXXFLAGS = -g -Wall -I/usr/include/hidapi $(shell wx-config --cxxflags)
 CXX = g++
 
 COMMON_SRCS = poll.cpp base.cpp exception.cpp message.cpp \
-	response_callback.cpp poll_response_collector.cpp
+	response_callback.cpp poll_response_collector.cpp observable.cpp \
+	observer.cpp
 TUI_SRCS = main.cpp
 GUI_SRCS = guimain.cpp
 

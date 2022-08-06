@@ -23,6 +23,7 @@
 #include <chrono>
 #include <mutex>
 #include "response.h"
+#include "observable.h"
 
 // A Poll is a single multiple choice poll.
 // Collects responses, organized by RemoteID.
@@ -37,7 +38,7 @@
 //
 // A std::mutex is used so that the object is safe to access from
 // multiple threads.
-class Poll {
+class Poll : public Observable {
 private:
   std::map<RemoteID, std::vector<Response>> m_responses;
   Timestamp m_start_wall;
@@ -45,6 +46,11 @@ private:
   mutable std::mutex m_lock;
 
 public:
+  // notification hints
+  enum {
+    RESPONSE_RECORDED,
+  };
+
   Poll();
 
   // call this when the poll starts so that the start time is recorded

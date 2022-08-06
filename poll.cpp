@@ -28,19 +28,25 @@ void Poll::start() {
 }
 
 void Poll::record_response(RemoteID remote_id, Option option) {
-  // We use a monotonically-increasing clock to determine how long
-  // after the poll started this response was submitted.
-  auto response_time_mono = std::chrono::steady_clock::now();
-  auto elapsed_millis = std::chrono::duration_cast<std::chrono::milliseconds>(response_time_mono - m_start_mono);
+  {
+    std::lock_guard<std::mutex> guard(m_lock);
 
-  // Package the response data
-  Response resp(remote_id, option, m_start_wall + elapsed_millis.count());
+    // We use a monotonically-increasing clock to determine how long
+    // after the poll started this response was submitted.
+    auto response_time_mono = std::chrono::steady_clock::now();
+    auto elapsed_millis = std::chrono::duration_cast<std::chrono::milliseconds>(response_time_mono - m_start_mono);
 
-  // Find vector of Response objects for the specified RemoteID
-  std::vector<Response> &responses_for_remote_id = m_responses[remote_id];
+    // Package the response data
+    Response resp(remote_id, option, m_start_wall + elapsed_millis.count());
 
-  // Store the Response
-  responses_for_remote_id.push_back(resp);
+    // Find vector of Response objects for the specified RemoteID
+    std::vector<Response> &responses_for_remote_id = m_responses[remote_id];
+
+    // Store the Response
+    responses_for_remote_id.push_back(resp);
+  }
+
+  notify_observers(RESPONSE_RECORDED);
 }
 
 Timestamp Poll::get_start_time() const {
