@@ -16,16 +16,18 @@
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
-#include <wx/button.h>
 #include <wx/bitmap.h>
+#include <wx/sizer.h>
 #include "poll_view.h"
 #include "play_button_icon.h"
+#include "stop_button_icon.h"
 
 namespace {
 
 const int PLAY_STOP_BUTTON = 100;
 
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
+wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
 }
 
@@ -34,9 +36,9 @@ PollView::PollView(wxWindow *parent)
   , m_poll(nullptr) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
-  wxButton *poll_control_btn = new wxButton(this, PLAY_STOP_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
-  poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
-  items->Add(poll_control_btn);
+  m_poll_control_btn = new wxButton(this, PLAY_STOP_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
+  m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
+  items->Add(m_poll_control_btn);
 
   SetSizer(items);
 }
@@ -50,6 +52,13 @@ void PollView::on_update(Observable *observable, int hint) {
 
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
   std::cout << "button pressed!\n";
+
+  static int x = 0;
+  if (x == 0)
+    m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
+  else
+    m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
+  x = !x;
 }
 
 wxBEGIN_EVENT_TABLE(PollView, wxPanel)

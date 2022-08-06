@@ -19,7 +19,7 @@
 #define POLL_VIEW_H
 
 #include <wx/panel.h>
-#include <wx/sizer.h>
+#include <wx/button.h>
 #include "observer.h"
 
 class Poll;
@@ -27,6 +27,7 @@ class Poll;
 class PollView : public wxPanel, public Observer {
 private:
   Poll *m_poll;
+  wxButton *m_poll_control_btn;
 
 public:
   PollView(wxWindow *parent);
