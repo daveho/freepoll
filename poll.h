@@ -53,6 +53,7 @@ public:
     POLL_STARTED,
     RESPONSE_RECORDED,
     POLL_STOPPED,
+    POLL_RESET,
   };
 
   Poll();
@@ -66,6 +67,10 @@ public:
 
   // call this when the poll stops
   void stop();
+
+  // reset the poll to clear out the data (so it can be restarted
+  // as a new poll)
+  void reset();
 
   // return true if the Poll has been started
   bool is_started() const;
@@ -81,7 +86,7 @@ public:
   std::map<RemoteID, Option> get_final_responses() const;
 
   // Get all responses (ordered by timestamp) for each student
-  const std::map<RemoteID, std::vector<Response>> get_all_responses() const;
+  std::map<RemoteID, std::vector<Response>> get_all_responses() const;
 };
 
 #endif // POLL_H

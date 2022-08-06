@@ -23,6 +23,8 @@
 #include "stop_button_icon.h"
 #include "timer.h"
 #include "timer_view.h"
+#include "poll.h"
+#include "poll_response_count_view.h"
 
 namespace {
 
@@ -36,7 +38,7 @@ wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 PollView::PollView(wxWindow *parent, Base *base)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
   , m_base(base)
-  , m_poll(nullptr)
+  , m_poll(new Poll())
   , m_timer(new Timer()) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
@@ -54,13 +56,20 @@ PollView::PollView(wxWindow *parent, Base *base)
 
   m_timer->add_observer(m_timer_view);
 
+  m_poll_response_count_view = new PollResponseCountView(this, m_poll);
+  items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE|wxALIGN_RIGHT);
+
+  m_poll->add_observer(m_poll_response_count_view);
+
   SetSizer(items);
 }
 
 PollView::~PollView() {
   m_timer->remove_observer(m_timer_view);
+  m_poll->remove_observer(m_poll_response_count_view);
 
   delete m_timer;
+  delete m_poll;
 }
 
 void PollView::on_update(Observable *observable, int hint) {

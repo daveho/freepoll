@@ -74,6 +74,20 @@ void Poll::stop() {
   notify_observers(POLL_STOPPED);
 }
 
+void Poll::reset() {
+  assert(m_started);
+  assert(m_stopped);
+
+  {
+    std::lock_guard<std::mutex> guard(m_lock);
+    m_started = false;
+    m_stopped = false;
+    m_responses.clear();
+  }
+
+  notify_observers(POLL_RESET);
+}
+
 bool Poll::is_started() const {
   std::lock_guard<std::mutex> guard(m_lock);
   return m_started;
@@ -101,7 +115,7 @@ std::map<RemoteID, Option> Poll::get_final_responses() const {
   return result;
 }
 
-const std::map<RemoteID, std::vector<Response>> Poll::get_all_responses() const {
+std::map<RemoteID, std::vector<Response>> Poll::get_all_responses() const {
   std::lock_guard<std::mutex> guard(m_lock);
 
   auto result = m_responses;
