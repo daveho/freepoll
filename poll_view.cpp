@@ -36,9 +36,12 @@ PollView::PollView(wxWindow *parent)
   , m_poll(nullptr) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
+  items->AddSpacer(10);
+
   m_poll_control_btn = new wxButton(this, PLAY_STOP_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
   m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
-  items->Add(m_poll_control_btn);
+
+  items->Add(m_poll_control_btn, 0, wxALL|wxALIGN_CENTRE);
 
   SetSizer(items);
 }
