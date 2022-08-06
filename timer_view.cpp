@@ -16,7 +16,8 @@ const int TIMER_UPDATED = 200;
 TimerView::TimerView(wxWindow *parent, Timer *timer)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(100, 44))
   , m_timer(timer) {
-  m_label = new wxStaticText(this, wxID_ANY, "Yo");
+  SetFont(GetFont().Scale(2.5));
+  m_label = new wxStaticText(this, wxID_ANY, "");
 }
 
 TimerView::~TimerView() {
