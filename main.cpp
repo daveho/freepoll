@@ -16,34 +16,39 @@
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <memory>
 #include <chrono>
 #include <thread>
-#include "response_callback.h"
+#include "poll.h"
+#include "poll_response_collector.h"
 #include "base.h"
 
 // this is just for testing
-class PrintResponses : public ResponseCallback {
+class PrintResponses : public PollResponseCollector {
 private:
   PrintResponses(const PrintResponses &);
   PrintResponses &operator=(const PrintResponses &);
 
 public:
-  PrintResponses();
+  PrintResponses(Poll &poll);
   virtual ~PrintResponses();
 
   virtual void on_response(RemoteID remote_id, Option option);
 };
 
-PrintResponses::PrintResponses() {
+PrintResponses::PrintResponses(Poll &poll)
+  : PollResponseCollector(poll) {
 }
 
 PrintResponses::~PrintResponses() {
 }
 
 void PrintResponses::on_response(RemoteID remote_id, Option option) {
+  PollResponseCollector::on_response(remote_id, option);
+
   std::stringstream ss;
   ss << std::hex;
   ss << "RemoteID:" << remote_id << ", option=" << char('A' + int(option));
@@ -58,6 +63,17 @@ void watch_poll(Base *base, ResponseCallback *response_callback, volatile const 
   base->stop_poll();
 }
 
+std::string option_to_str(Option option) {
+  switch (option) {
+  case Option::A: return "A";
+  case Option::B: return "B";
+  case Option::C: return "C";
+  case Option::D: return "D";
+  case Option::E: return "E";
+  default:        return "?";
+  }
+}
+
 }
 
 int main() {
@@ -67,19 +83,12 @@ int main() {
 
   std::cout << "initialized base?\n";
 
-#if 0
-  base->set_screen(" ALL YOUR BASE  ", 0);
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-  base->set_screen("ARE BELONG TO US", 1);
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-#endif
-
   std::cout << "Test program: enter \"start\" to start a poll,\n"
             << "and enter \"stop\" to end the poll and quit\n"
             << "the program\n";
 
-  PrintResponses print_responses;
+  Poll poll;
+  PrintResponses print_responses(poll);
   std::thread *poll_watcher = nullptr;
   bool stop = false; // will control when poll stops
 
@@ -98,6 +107,13 @@ int main() {
       }
       done = true;
     }
+  }
+
+  // print poll results
+  std::map<RemoteID, Option> poll_results = poll.get_final_responses();
+  std::cout << "RemoteID,Option\n";
+  for (auto i = poll_results.begin(); i != poll_results.end(); ++i) {
+    std::cout << std::hex << std::setw(8) << i->first << "," << option_to_str(i->second) << "\n";
   }
 
   return 0;

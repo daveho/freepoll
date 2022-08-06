@@ -22,6 +22,7 @@ Poll::Poll() {
 }
 
 void Poll::start() {
+  std::lock_guard<std::mutex> guard(m_lock);
   m_start_wall = ts::millis_since_epoch();
   m_start_mono = std::chrono::steady_clock::now();
 }
@@ -40,4 +41,29 @@ void Poll::record_response(RemoteID remote_id, Option option) {
 
   // Store the Response
   responses_for_remote_id.push_back(resp);
+}
+
+Timestamp Poll::get_start_time() const {
+  std::lock_guard<std::mutex> guard(m_lock);
+  return m_start_wall;
+}
+
+std::map<RemoteID, Option> Poll::get_final_responses() const {
+  std::lock_guard<std::mutex> guard(m_lock);
+
+  std::map<RemoteID, Option> result;
+
+  for (auto i = m_responses.begin(); i != m_responses.end(); ++i) {
+    result[i->first] = i->second.back().get_option();
+  }
+
+  return result;
+}
+
+const std::map<RemoteID, std::vector<Response>> Poll::get_all_responses() const {
+  std::lock_guard<std::mutex> guard(m_lock);
+
+  auto result = m_responses;
+
+  return result;
 }

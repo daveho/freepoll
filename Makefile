@@ -1,7 +1,8 @@
 CXXFLAGS = -g -Wall -I/usr/include/hidapi
 CXX = g++
 
-SRCS = poll.cpp main.cpp base.cpp exception.cpp message.cpp response_callback.cpp
+SRCS = poll.cpp main.cpp base.cpp exception.cpp message.cpp response_callback.cpp \
+	poll_response_collector.cpp
 OBJS = $(SRCS:%.cpp=%.o)
 
 %.o : %.cpp
