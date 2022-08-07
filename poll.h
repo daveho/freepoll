@@ -93,6 +93,9 @@ public:
 
   // Get all responses (ordered by timestamp) for each student
   std::map<RemoteID, std::vector<Response>> get_all_responses() const;
+
+  // Get the number of "effective" responses
+  unsigned get_num_final_responses() const { return m_responses.size(); }
 };
 
 #endif // POLL_H

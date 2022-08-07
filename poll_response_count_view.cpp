@@ -23,13 +23,17 @@ namespace {
 
 const int POLL_UPDATED = 400;
 
+const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
+
 }
 
 PollResponseCountView::PollResponseCountView(wxWindow *parent, Poll *poll)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(80, 44))
   , m_poll(poll) {
   SetFont(GetFont().Scale(2.5));
-  m_label = new wxStaticText(this, wxID_ANY, "");
+  m_label = new wxStaticText(this, wxID_ANY, "0");
+
+  m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
 }
 
 PollResponseCountView::~PollResponseCountView() {
@@ -46,14 +50,15 @@ void PollResponseCountView::on_update(Observable *observable, int hint) {
 void PollResponseCountView::on_poll_update(wxCommandEvent &evt) {
   std::string text;
 
-  if (!m_poll->is_started()) {
-    text = "";
+  if (!m_poll->is_started() || m_poll->is_stopped()) {
+    m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
   } else {
-    unsigned num_responses = m_poll->get_final_responses().size();
-    std::stringstream ss;
-    ss << num_responses;
-    text = ss.str();
+    m_label->SetForegroundColour(*wxBLACK);
   }
+
+  std::stringstream ss;
+  ss << m_poll->get_num_final_responses();
+  text = ss.str();
 
   m_label->SetLabel(text);
 }

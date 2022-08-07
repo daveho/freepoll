@@ -20,6 +20,15 @@ PollModel::~PollModel() {
   delete m_base;
 }
 
+bool PollModel::is_poll_running() {
+  return m_poll->is_started();
+}
+
+bool PollModel::can_start_poll() {
+  // TODO: could check whether the base station is connected
+  return !m_poll->is_started();
+}
+
 Base *PollModel::get_base() {
   return m_base;
 }

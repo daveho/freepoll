@@ -25,6 +25,8 @@ namespace {
 
 const int TIMER_UPDATED = 200;
 
+const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
+
 }
 
 // Caller is responsible for registering the TimerView as an
@@ -34,7 +36,8 @@ TimerView::TimerView(wxWindow *parent, Timer *timer)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(100, 44))
   , m_timer(timer) {
   SetFont(GetFont().Scale(2.5));
-  m_label = new wxStaticText(this, wxID_ANY, "");
+  m_label = new wxStaticText(this, wxID_ANY, "0:00");
+  m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
 }
 
 TimerView::~TimerView() {
@@ -54,7 +57,8 @@ void TimerView::on_timer_update(wxCommandEvent &evt) {
   //std::cout << "processing timer event in view\n";
 
   if (!m_timer->is_running()) {
-    m_label->SetLabel("");
+    m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
+    m_label->SetLabel("0:00");
   } else {
     unsigned num_seconds = m_timer->get_num_seconds();
 
@@ -64,6 +68,7 @@ void TimerView::on_timer_update(wxCommandEvent &evt) {
     std::stringstream ss;
     ss << min << ":" << std::setfill('0') << std::setw(2) << sec;
 
+    m_label->SetForegroundColour(*wxBLACK);
     m_label->SetLabel(ss.str());
   }
 }

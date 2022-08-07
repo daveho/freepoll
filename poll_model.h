@@ -29,6 +29,9 @@ public:
 
   // FIXME: there should be some state/lifecycle functions here
 
+  bool is_poll_running();
+  bool can_start_poll();
+
   Base *get_base();
   Poll *get_poll();
   Timer *get_timer();
