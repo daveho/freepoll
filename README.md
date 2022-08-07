@@ -1,6 +1,6 @@
 # FreePoll
 
-This is a highly-experimental attempt to create an open source client program
+This is a somewhat experimental attempt to create an open source client program
 for the [iClicker](https://www.iclicker.com/) system for classroom
 polling.
 
@@ -101,6 +101,6 @@ version 3.  See the [LICENSE](LICENSE) for details.
 
 ## Contact
 
-If you're interested in helping out, you can contact me at
+If you're interested in helping out, or have feedback, you can contact me at
 <mailto:david.hovemeyer@gmail.com>.
 
