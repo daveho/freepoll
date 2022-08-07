@@ -73,7 +73,7 @@ bool FreePollApp::OnInit()
 }
 
 FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
-  : wxFrame(NULL, wxID_ANY, title)
+  : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE|wxSTAY_ON_TOP)
 {
   m_poll_view = new PollView(this, model);
   //m_poll_view->SetBackgroundColour(wxColour(*wxBLUE));
