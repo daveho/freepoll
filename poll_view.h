@@ -22,23 +22,19 @@
 #include <wx/button.h>
 #include "observer.h"
 
-class Base;
-class Poll;
-class Timer;
+class PollModel;
 class TimerView;
 class PollResponseCountView;
 
 class PollView : public wxPanel, public Observer {
 private:
-  Base *m_base;
-  Poll *m_poll;
-  Timer *m_timer;
+  PollModel *m_model;
   wxButton *m_poll_control_btn;
   TimerView *m_timer_view;
   PollResponseCountView *m_poll_response_count_view;
 
 public:
-  PollView(wxWindow *parent, Base *base);
+  PollView(wxWindow *parent, PollModel *model);
   virtual ~PollView();
 
   virtual void on_update(Observable *observable, int hint);

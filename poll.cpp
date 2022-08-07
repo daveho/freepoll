@@ -59,7 +59,7 @@ void Poll::record_response(RemoteID remote_id, Option option) {
     responses_for_remote_id.push_back(resp);
   }
 
-  notify_observers(RESPONSE_RECORDED);
+  notify_observers(POLL_RESPONSE_RECORDED);
 }
 
 void Poll::stop() {

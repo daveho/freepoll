@@ -50,11 +50,17 @@ private:
 public:
   // notification hints
   enum {
-    POLL_STARTED,
-    RESPONSE_RECORDED,
+    POLL_STARTED = 1000,
+    POLL_RESPONSE_RECORDED,
     POLL_STOPPED,
     POLL_RESET,
+
+    POLL_LAST,
   };
+
+  static bool is_valid_hint(int hint) {
+    return hint >= POLL_STARTED && hint < POLL_LAST;
+  }
 
   Poll();
 

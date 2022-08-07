@@ -26,6 +26,7 @@
 #include "base.h"
 #include "exception.h"
 #include "poll_view.h"
+#include "poll_model.h"
 
 class FreePollApp: public wxApp
 {
@@ -39,7 +40,7 @@ private:
   PollView *m_poll_view;
 
 public:
-  FreePollFrame(const wxString& title, Base *base);
+  FreePollFrame(const wxString& title, PollModel *model);
 
 private:
   void OnExit(wxCommandEvent& event);
@@ -54,27 +55,27 @@ wxIMPLEMENT_APP(FreePollApp);
 
 bool FreePollApp::OnInit()
 {
-  Base *base = new Base();
+  PollModel *model = new PollModel();
 
   // FIXME: it would be nice to have a more dynamic way to connect to the base
   // (e.g., periodically trying to connect to it, so that the program could
   // detect if the base is plugged in while the program is running)
   try {
-    base->initialize();
+    model->get_base()->initialize();
   } catch (PollException &ex) {
     std::cerr << "Could not initialize base station: " << ex.what() << "\n";
     return false;
   }
 
-  FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION, base );
+  FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION, model );
   frame->Show( true );
   return true;
 }
 
-FreePollFrame::FreePollFrame(const wxString& title, Base *base)
+FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
   : wxFrame(NULL, wxID_ANY, title)
 {
-  m_poll_view = new PollView(this, base);
+  m_poll_view = new PollView(this, model);
   //m_poll_view->SetBackgroundColour(wxColour(*wxBLUE));
 
   Fit();

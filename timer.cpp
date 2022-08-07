@@ -80,7 +80,7 @@ void Timer::run(Timer *timer) {
         std::lock_guard<std::mutex> guard(timer->m_lock);
         timer->m_num_seconds = elapsed.count();
       }
-      timer->notify_observers(NUM_SECONDS_UPDATED);
+      timer->notify_observers(TIMER_NUM_SECONDS_UPDATED);
     }
   }
 }

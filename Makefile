@@ -6,7 +6,7 @@ COMMON_SRCS = poll.cpp base.cpp exception.cpp message.cpp \
 	observer.cpp timer.cpp
 TUI_SRCS = main.cpp
 GUI_SRCS = guimain.cpp poll_view.cpp timer_view.cpp \
-	poll_response_count_view.cpp
+	poll_response_count_view.cpp poll_model.cpp
 
 ALL_SRCS = $(COMMON_SRCS) $(TUI_SRCS) $(GUI_SRCS)
 

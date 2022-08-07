@@ -18,13 +18,14 @@
 #include <iostream>
 #include <wx/bitmap.h>
 #include <wx/sizer.h>
-#include "poll_view.h"
 #include "play_button_icon.h"
 #include "stop_button_icon.h"
 #include "timer.h"
 #include "timer_view.h"
 #include "poll.h"
 #include "poll_response_count_view.h"
+#include "poll_model.h"
+#include "poll_view.h"
 
 namespace {
 
@@ -35,11 +36,9 @@ wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
 }
 
-PollView::PollView(wxWindow *parent, Base *base)
+PollView::PollView(wxWindow *parent, PollModel *model)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
-  , m_base(base)
-  , m_poll(new Poll())
-  , m_timer(new Timer()) {
+  , m_model(model) {
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
   items->AddSpacer(10);
@@ -51,25 +50,24 @@ PollView::PollView(wxWindow *parent, Base *base)
 
   items->AddSpacer(10);
 
-  m_timer_view = new TimerView(this, m_timer);
+  m_timer_view = new TimerView(this, m_model->get_timer());
   items->Add(m_timer_view, 0, wxALL|wxALIGN_CENTRE);
 
-  m_timer->add_observer(m_timer_view);
+  m_model->get_timer()->add_observer(m_timer_view);
 
-  m_poll_response_count_view = new PollResponseCountView(this, m_poll);
+  m_poll_response_count_view = new PollResponseCountView(this, m_model->get_poll());
   items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE|wxALIGN_RIGHT);
 
-  m_poll->add_observer(m_poll_response_count_view);
+  m_model->get_poll()->add_observer(m_poll_response_count_view);
 
   SetSizer(items);
 }
 
 PollView::~PollView() {
-  m_timer->remove_observer(m_timer_view);
-  m_poll->remove_observer(m_poll_response_count_view);
+  m_model->get_timer()->remove_observer(m_timer_view);
+  m_model->get_poll()->remove_observer(m_poll_response_count_view);
 
-  delete m_timer;
-  delete m_poll;
+  delete m_model;
 }
 
 void PollView::on_update(Observable *observable, int hint) {
@@ -79,11 +77,11 @@ void PollView::on_update(Observable *observable, int hint) {
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
   std::cout << "button pressed!\n";
 
-  if (!m_timer->is_running()) {
-    m_timer->start();
+  if (!m_model->get_timer()->is_running()) {
+    m_model->get_timer()->start();
     m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
   } else {
-    m_timer->stop();
+    m_model->get_timer()->stop();
     m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
   }
 }

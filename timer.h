@@ -36,10 +36,16 @@ private:
 public:
   // notification hints
   enum {
-    TIMER_STARTED,
-    NUM_SECONDS_UPDATED,
+    TIMER_STARTED = 2000,
+    TIMER_NUM_SECONDS_UPDATED,
     TIMER_STOPPED,
+
+    TIMER_LAST,
   };
+
+  static bool is_valid_hint(int hint) {
+    return hint >= TIMER_STARTED && hint < TIMER_LAST;
+  }
 
   Timer();
   virtual ~Timer();
