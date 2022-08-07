@@ -29,6 +29,7 @@
 #include "poll_runner.h"
 #include "datastore.h"
 #include "course.h"
+#include "exception.h"
 #include "poll_view.h"
 
 namespace {
@@ -97,14 +98,15 @@ void PollView::on_update(Observable *observable, int hint) {
 }
 
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
-  std::cout << "button pressed!\n";
-
   if (!m_model->is_poll_running() && m_model->can_start_poll()) {
     // if a poll was started previously, reset it
     if (m_model->get_poll()->is_started()) {
       assert(m_model->get_poll()->is_stopped());
       m_model->get_poll()->reset();
     }
+
+    assert(!m_model->get_poll()->is_started());
+    assert(!m_model->get_poll()->is_stopped());
 
     // disable the course selector
     m_course_list->Enable(false);
@@ -132,11 +134,14 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     delete m_poll_runner;
     m_poll_runner = nullptr;
 
-    // TODO: write poll results to file
-    std::cout << "poll finished:\nRemoteID,Option\n";
-    std::map<RemoteID, Option> responses = m_model->get_poll()->get_final_responses();
-    for (auto i = responses.begin(); i != responses.end(); ++i) {
-      std::cout << std::hex << i->first << "," << char('A' + int(i->second)) << "\n";
+    // write poll results to files
+    int sel_course = m_course_list->GetSelection();
+    assert(sel_course >= 0 && sel_course < int(m_model->get_datastore()->get_courses().size()));
+    Course *course = m_model->get_datastore()->get_courses().at(sel_course);
+    try {
+      m_model->get_datastore()->write_poll_results(course, m_model->get_poll());
+    } catch (PollException &ex) {
+      std::cerr << "Error writing poll data: " << ex.what() << "\n";
     }
 
     // re-enable course selection

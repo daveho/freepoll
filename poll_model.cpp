@@ -40,12 +40,12 @@ PollModel::~PollModel() {
 }
 
 bool PollModel::is_poll_running() {
-  return m_poll->is_started();
+  return m_poll->is_started() && !m_poll->is_stopped();
 }
 
 bool PollModel::can_start_poll() {
   // TODO: could check whether the base station is connected
-  return !m_poll->is_started();
+  return !is_poll_running();
 }
 
 DataStore *PollModel::get_datastore() {

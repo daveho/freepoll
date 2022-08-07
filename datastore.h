@@ -21,6 +21,7 @@
 #include <vector>
 #include <string>
 class Course;
+class Poll;
 
 // The DataStore is the central location where all course and
 // clicker response data is stored.
@@ -45,6 +46,7 @@ public:
   const std::vector<Course *> &get_courses() const { return m_courses; }
 
   // TODO: functions for creating and saving screenshot and clicker data
+  void write_poll_results(Course *course, const Poll *poll);
 
 private:
   void load_course(const std::string &course_dir, const std::string &courseinfo_filename);
