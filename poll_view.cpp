@@ -27,6 +27,8 @@
 #include "poll_response_count_view.h"
 #include "poll_model.h"
 #include "poll_runner.h"
+#include "datastore.h"
+#include "course.h"
 #include "poll_view.h"
 
 namespace {
@@ -36,12 +38,26 @@ const int PLAY_STOP_BUTTON = 100;
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
 wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
+const int POLL_VIEW_WIDTH = 400;
+const int POLL_VIEW_HEIGHT = 116;
+
 }
 
 PollView::PollView(wxWindow *parent, PollModel *model)
-  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(320, 96))
+  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT))
   , m_model(model)
   , m_poll_runner(nullptr) {
+  wxBoxSizer *vlayout = new wxBoxSizer(wxVERTICAL);
+
+  m_course_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, 32));
+  for (Course *course : m_model->get_datastore()->get_courses()) {
+    m_course_list->Append(course->get_display_string(), course);
+  }
+  m_course_list->SetSelection(0);
+  vlayout->Add(m_course_list, 0, wxEXPAND);
+
+  vlayout->AddSpacer(8);
+
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
   items->AddSpacer(10);
@@ -64,8 +80,9 @@ PollView::PollView(wxWindow *parent, PollModel *model)
   items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->get_poll()->add_observer(m_poll_response_count_view);
+  vlayout->Add(items);
 
-  SetSizer(items);
+  SetSizer(vlayout);
 }
 
 PollView::~PollView() {
@@ -88,6 +105,9 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
       assert(m_model->get_poll()->is_stopped());
       m_model->get_poll()->reset();
     }
+
+    // disable the course selector
+    m_course_list->Enable(false);
 
     // start timer
     m_model->get_timer()->start();
@@ -118,6 +138,9 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     for (auto i = responses.begin(); i != responses.end(); ++i) {
       std::cout << std::hex << i->first << "," << char('A' + int(i->second)) << "\n";
     }
+
+    // re-enable course selection
+    m_course_list->Enable(true);
   }
 }
 

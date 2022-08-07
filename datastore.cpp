@@ -58,6 +58,10 @@ void DataStore::locate_courses() {
       }
     }
   }
+
+  // sort courses (this will put them in a reasonable order in the selection list)
+  std::sort(m_courses.begin(), m_courses.end(),
+            [](Course *lhs, Course *rhs) { return *lhs < *rhs; });
 }
 
 void DataStore::load_course(const std::string &course_dir, const std::string &courseinfo_filename) {

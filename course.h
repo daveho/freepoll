@@ -49,6 +49,8 @@ public:
   std::string get_directory() const    { return m_directory; }
   bool is_active() const               { return m_active; }
 
+  std::string get_display_string() const;
+
   void set_title(const std::string &title)               { m_title = title; }
   void set_term_display(const std::string &term_display) { m_term_display = term_display; }
   void set_term_num(int term_num)                        { m_term_num = term_num; }

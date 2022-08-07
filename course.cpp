@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include <sstream>
 #include "course.h"
 
 Course::Course()
@@ -43,6 +44,12 @@ Course::Course(const std::string &title,
 }
 
 Course::~Course() {
+}
+
+std::string Course::get_display_string() const {
+  std::stringstream ss;
+  ss << m_title << " " << m_term_display << " " << m_year << " (Sec " << m_section << ")";
+  return ss.str();
 }
 
 #define COMPARE(fieldname) \

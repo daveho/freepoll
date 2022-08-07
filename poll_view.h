@@ -20,6 +20,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
+#include <wx/choice.h>
 #include "observer.h"
 
 class PollModel;
@@ -30,6 +31,7 @@ class PollRunner;
 class PollView : public wxPanel, public Observer {
 private:
   PollModel *m_model;
+  wxChoice *m_course_list;
   wxButton *m_poll_control_btn;
   TimerView *m_timer_view;
   PollResponseCountView *m_poll_response_count_view;
