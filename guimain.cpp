@@ -71,7 +71,16 @@ bool FreePollApp::OnInit()
 
   m_datastore = new DataStore(user_home + "/FreePoll");
   m_datastore->locate_courses();
-  std::cout << "Found " << m_datastore->get_courses().size() << " course(s)\n";
+
+  unsigned num_courses_located = unsigned(m_datastore->get_courses().size());
+  if (num_courses_located == 0) {
+    wxMessageDialog *dialog = new wxMessageDialog(NULL, wxT("No courses found"), wxT("Error"), wxOK | wxICON_ERROR);
+    dialog->ShowModal();
+    delete dialog;
+    return false;
+  }
+
+  std::cout << "Found " << num_courses_located << " course(s)\n";
 
   PollModel *model = new PollModel(m_datastore);
 
