@@ -3,7 +3,7 @@ CXX = g++
 
 COMMON_SRCS = poll.cpp base.cpp exception.cpp message.cpp \
 	response_callback.cpp poll_response_collector.cpp poll_runner.cpp \
-	observable.cpp observer.cpp timer.cpp
+	observable.cpp observer.cpp timer.cpp datastore.cpp course.cpp
 TUI_SRCS = main.cpp
 GUI_SRCS = guimain.cpp poll_view.cpp timer_view.cpp \
 	poll_response_count_view.cpp poll_model.cpp

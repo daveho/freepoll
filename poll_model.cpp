@@ -15,13 +15,15 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include "datastore.h"
 #include "base.h"
 #include "poll.h"
 #include "timer.h"
 #include "poll_model.h"
 
-PollModel::PollModel()
-  : m_base(new Base())
+PollModel::PollModel(DataStore *datastore)
+  : m_datastore(datastore)
+  , m_base(new Base())
   , m_poll(new Poll())
   , m_timer(new Timer()) {
   m_poll->add_observer(this);
@@ -44,6 +46,10 @@ bool PollModel::is_poll_running() {
 bool PollModel::can_start_poll() {
   // TODO: could check whether the base station is connected
   return !m_poll->is_started();
+}
+
+DataStore *PollModel::get_datastore() {
+  return m_datastore;
 }
 
 Base *PollModel::get_base() {

@@ -21,8 +21,10 @@
 #ifndef WX_PRECOMP
   #include <wx/wx.h>
 #endif
+#include <wx/stdpaths.h>
 
 #include "datatypes.h"
+#include "datastore.h"
 #include "base.h"
 #include "exception.h"
 #include "poll_view.h"
@@ -30,7 +32,11 @@
 
 class FreePollApp: public wxApp
 {
+private:
+  DataStore *m_datastore;
+
 public:
+  virtual ~FreePollApp();
   virtual bool OnInit();
 };
 
@@ -53,9 +59,21 @@ wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(FreePollApp);
 
+FreePollApp::~FreePollApp() {
+  delete m_datastore;
+}
+
 bool FreePollApp::OnInit()
 {
-  PollModel *model = new PollModel();
+  auto &stdpaths = wxStandardPaths::Get();
+
+  std::string user_home(stdpaths.GetUserConfigDir().mb_str());
+
+  m_datastore = new DataStore(user_home + "/FreePoll");
+  m_datastore->locate_courses();
+  std::cout << "Found " << m_datastore->get_courses().size() << " course(s)\n";
+
+  PollModel *model = new PollModel(m_datastore);
 
   // FIXME: it would be nice to have a more dynamic way to connect to the base
   // (e.g., periodically trying to connect to it, so that the program could

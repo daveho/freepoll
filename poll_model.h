@@ -21,6 +21,7 @@
 #include "observer.h"
 #include "observable.h"
 
+class DataStore;
 class Base;
 class Poll;
 class Timer;
@@ -29,9 +30,12 @@ class Timer;
 // It aggregates Base, Poll, and Timer, and unifies their notifications.
 // It also has responsibility for creating and deleting the Base,
 // Poll, and Timer objects, and generally managing their lifecycles.
+// It uses a DataStore, but is not responsible for creating or
+// deleting it.
 
 class PollModel : public Observer, public Observable {
 private:
+  DataStore *m_datastore;
   Base *m_base;
   Poll *m_poll;
   Timer *m_timer;
@@ -41,7 +45,7 @@ public:
   // just use the hint values from Poll and Timer,
   // which are distinct
 
-  PollModel();
+  PollModel(DataStore *datastore);
   virtual ~PollModel();
 
   // FIXME: there should be some state/lifecycle functions here
@@ -49,6 +53,7 @@ public:
   bool is_poll_running();
   bool can_start_poll();
 
+  DataStore *get_datastore();
   Base *get_base();
   Poll *get_poll();
   Timer *get_timer();
