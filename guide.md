@@ -94,7 +94,7 @@ FreePoll will create a new subdirectory of the course directory for the selected
 course, with a directory name of the form
 
 ```
-YYYY-MM-DD-NNN`
+YYYY-MM-DD-NNN
 ```
 
 where `YYYY-MM-DD` is the current date, and `NNN` is a sequence number
@@ -104,7 +104,8 @@ assigned different (increasing) numbers.
 Within the directory created for the poll, you will find two files,
 `responses.csv` and `all_responses.csv`.  `responses.csv` contains only
 the final response for each iClicker remote. `all_responses.csv` contains
-all responses submitted for each iClicker remote.
+all responses submitted for each iClicker remote, with a timestamp.
+The timestamp values are number of milliseconds since the Unix epoch.
 
 FreePoll doesn't have any notion of student identities. It only knows about
 iClicker remote IDs.  You'll need to have students tell you iClicker remote
