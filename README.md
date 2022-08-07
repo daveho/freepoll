@@ -83,20 +83,22 @@ FreePoll to be.
 # Technical details
 
 [Jason Siefken](https://www.math.toronto.edu/siefkenj/homepage/index.html)
-has already done the hard part, which is reverse-engineering enough of the
+already did the hard part, which is reverse-engineering enough of the
 USB protocol that the iClicker base station uses to talk to the host PC
 to allow polls to be run and responses collected. He created
 [iclickerpoll](https://github.com/siefkenj/iclickerpoll), which is a
 command line program written in Python which allows a single poll to be
 run and the responses written to a CSV file.
 
+My contribution was translating Jason's work to C++, and then writing
+a simple GUI for running polls.  The GUI is implemented using
+[wxWidgets](https://www.wxwidgets.org/).  Note that it's only been
+tested on Linux using GTK3.
+
 The iClicker base station appears as a Human Interface Device (HID),
 which is probably the easiest kind of USB device to communicate with.
 FreePoll uses [libusb/hidapi](https://github.com/libusb/hidapi)
 to talk to the base station, using the same approach as iclickerpoll.
-
-The GUI is implemented using [wxWidgets](https://www.wxwidgets.org/).
-Note that it's only been tested on Linux using GTK3.
 
 # License
 
