@@ -23,9 +23,10 @@
 #include <chrono>
 #include <thread>
 #include "poll.h"
-#include "poll_response_collector.h"
 #include "base.h"
+#include "poll_runner.h"
 
+#if 0
 // this is just for testing
 class PrintResponses : public PollResponseCollector {
 private:
@@ -75,6 +76,7 @@ std::string option_to_str(Option option) {
 }
 
 }
+#endif
 
 int main() {
   std::cout << "Initalizing base...\n";
@@ -88,21 +90,24 @@ int main() {
             << "the program\n";
 
   Poll poll;
-  PrintResponses print_responses(poll);
-  std::thread *poll_watcher = nullptr;
-  bool stop = false; // will control when poll stops
+  //PrintResponses print_responses(poll);
+  //std::thread *poll_watcher = nullptr;
+  //bool stop = false; // will control when poll stops
+  PollRunner runner(base.get(), &poll);
 
   bool done = false;
   std::string line;
   while (!done && std::getline(std::cin, line)) {
-    if (line == "start" && poll_watcher == nullptr) {
+    if (line == "start" && !runner.is_poll_started()) {
       std::cout << "starting poll...\n";
-      poll_watcher = new std::thread( watch_poll, base.get(), &print_responses, &stop);
+      //poll_watcher = new std::thread( watch_poll, base.get(), &print_responses, &stop);
+      runner.start_poll();
     } else if (line == "stop") {
-      if (poll_watcher != nullptr) {
-        stop = true;
-        poll_watcher->join();
-        delete poll_watcher;
+      if (runner.is_poll_started()) {
+        //stop = true;
+        //poll_watcher->join();
+        //delete poll_watcher;
+        runner.stop_poll();
         std::cout << "poll finished\n";
       }
       done = true;
@@ -113,7 +118,7 @@ int main() {
   std::map<RemoteID, Option> poll_results = poll.get_final_responses();
   std::cout << "RemoteID,Option\n";
   for (auto i = poll_results.begin(); i != poll_results.end(); ++i) {
-    std::cout << std::hex << std::setw(8) << i->first << "," << option_to_str(i->second) << "\n";
+    std::cout << std::hex << std::setw(8) << i->first << "," << char('A' + int(i->second)) << "\n";
   }
 
   return 0;
