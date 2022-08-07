@@ -70,7 +70,7 @@ software only supports storing the collected data remotely (in the "cloud").
 So, the instructor must create an account to use it. Amazingly,
 the data available for download does not actually contain the student
 responses! At best, you can see who participated, and if you've
-indicated which are the correct answer, you can find out who answered
+indicated which are the correct answers, you can find out who answered
 the question correctly. But you can't actually find out which specific
 choices the students made in their responses! (I am trying to avoid going
 into an extended rant about how frustrating this is. Suffice it to say
