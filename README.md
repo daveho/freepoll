@@ -4,11 +4,47 @@ This is a somewhat experimental attempt to create an open source client program
 for the [iClicker](https://www.iclicker.com/) system for classroom
 polling.
 
-Clickers are widely used as a way of implementing
-[Peer Instruction](https://mazur.harvard.edu/research-areas/peer-instruction)
-in college courses.
+![FreePoll GUI screenshot](img/screenshot.png)
 
-## Why?
+FreePoll exists because I wanted an open source program that I could
+use to run clicker quizzes from a Linux system.
+
+If you're interested in trying out FreePoll, first [compile it](#compilation),
+then you can refer to the [Guide](guide.md) for details on how to use it.
+
+FreePoll was basically written in one weekend, so almost certainly there
+are bugs. [Let me know](#contact) if you run into any.
+
+# Who might find FreePoll useful?
+
+If you use [Peer Instruction](https://mazur.harvard.edu/research-areas/peer-instruction)
+in your teaching, and you either run Linux or prefer to use open source software,
+FreePoll might be useful to you.  See the [Why](#why) section.
+
+# Compilation
+
+On Linux, you will need the libusb/hidapi development package and the
+wxWidgets development package to be installed.  On Debian or Ubuntu:
+
+```
+sudo apt install libhidapi-dev libwxgtk3.0-gtk3-dev
+```
+
+You'll also need `g++` and `make`.
+
+To compile the program:
+
+```
+make depend
+make -j
+```
+
+(The `-j` option is just so `make` uses all of your CPU cores.)
+
+The command line executable is called `freepoll`, and the GUI executable
+is called `freepoll-gui`.
+
+# Why?
 
 The basic premise of clickers is pretty simple. You show students a
 multiple choice quiz question, let them think about the question,
@@ -38,13 +74,13 @@ indicated which are the correct answer, you can find out who answered
 the question correctly. But you can't actually find out which specific
 choices the students made in their responses! (I am trying to avoid going
 into an extended rant about how frustrating this is. Suffice it to say
-that I think this is highly sub-optimal.)
+that I think this is ridiculous and stupid.)
 
 So, what I want is a portable, open source client program that gives
 me full access to the students' responses.  This is what I would like
 FreePoll to be.
 
-## Technical details
+# Technical details
 
 [Jason Siefken](https://www.math.toronto.edu/siefkenj/homepage/index.html)
 has already done the hard part, which is reverse-engineering enough of the
@@ -59,47 +95,18 @@ which is probably the easiest kind of USB device to communicate with.
 FreePoll uses [libusb/hidapi](https://github.com/libusb/hidapi)
 to talk to the base station, using the same approach as iclickerpoll.
 
-## Status
+The GUI is implemented using [wxWidgets](https://www.wxwidgets.org/).
+Note that it's only been tested on Linux using GTK3.
 
-Progress on FreePoll is proceeding rapidly. A GUI implemented using
-[wxWidgets](https://www.wxwidgets.org/) is well underway, and is already
-capable of running polls.  Mostly what's missing is storing collected
-poll data to files.  I'm pretty confident that this will be working
-soon.
-
-I am endeavoring to make FreePoll completely portable. Right now it
-is written in (theoretically) portable C++, other than the reliance
-on libusb/hidapi and wxWidgets.
-
-# Compilation
-
-On Linux, you will need the libusb/hidapi development package and the
-wxWidgets development package to be installed.  On Debian or Ubuntu:
-
-```
-sudo apt install libhidapi-dev libwxgtk3.0-gtk3-dev
-```
-
-You'll also need `g++` and `make`.
-
-To compile the program:
-
-```
-make depend
-make -j
-```
-
-(The `-j` option is just so `make` uses all of your CPU cores.)
-
-The command line executable is called `freepoll`, and the GUI executable
-is called `freepoll-gui`.
-
-## License
+# License
 
 FreePoll is distributed under the terms of the GNU General Public License
 version 3.  See the [LICENSE](LICENSE) for details.
 
-## Contact
+FreePoll includes code derived from [iclickerpoll](https://github.com/siefkenj/iclickerpoll).
+It also uses [rapidcsv](https://github.com/d99kris/rapidcsv) to read CSV files.
+
+# Contact
 
 If you're interested in helping out, or have feedback, you can contact me at
 <mailto:david.hovemeyer@gmail.com>.
