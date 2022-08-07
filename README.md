@@ -61,26 +61,23 @@ to talk to the base station, using the same approach as iclickerpoll.
 
 ## Status
 
-As of right now, FreePoll can connect to the base station and receive responses
-(at least from the one iClicker 2 remote that I own.)  It doesn't save
-the responses to a file, and there isn't any user interface to speak of
-at this point. It's very much a work in progress, and isn't ready for
-production use.
-
-I would *like* to add a simple GUI so that FreePoll is roughly equivalent
-to iClicker classic.
+Progress on FreePoll is proceeding rapidly. A GUI implemented using
+[wxWidgets](https://www.wxwidgets.org/) is well underway, and is already
+capable of running polls.  Mostly what's missing is storing collected
+poll data to files.  I'm pretty confident that this will be working
+soon.
 
 I am endeavoring to make FreePoll completely portable. Right now it
 is written in (theoretically) portable C++, other than the reliance
-on libusb/hidapi.
+on libusb/hidapi and wxWidgets.
 
 # Compilation
 
-On Linux, you will need the libusb/hidapi development package to be installed.
-On Debian or Ubuntu:
+On Linux, you will need the libusb/hidapi development package and the
+wxWidgets development package to be installed.  On Debian or Ubuntu:
 
 ```
-sudo apt install libhidapi-dev
+sudo apt install libhidapi-dev libwxgtk3.0-gtk3-dev
 ```
 
 You'll also need `g++` and `make`.
@@ -89,10 +86,13 @@ To compile the program:
 
 ```
 make depend
-make
+make -j
 ```
 
-The executable is called `freepoll`.
+(The `-j` option is just so `make` uses all of your CPU cores.)
+
+The command line executable is called `freepoll`, and the GUI executable
+is called `freepoll-gui`.
 
 ## License
 
