@@ -27,6 +27,7 @@
 #include <map>
 #include <algorithm>
 #include <numeric>
+#include <cctype>
 #include "exception.h"
 #include "message.h"
 #include "datatypes.h"
@@ -77,7 +78,7 @@ struct RawResponse {
 namespace {
 
 bool is_valid_freq_char(char c) {
-  return c >= 'a' && c <= 'e';
+  return c >= 'a' && c <= 'd';
 }
 
 void decode_response(const unsigned char *data, std::vector<RawResponse> &responses) {
@@ -217,8 +218,7 @@ const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 500;
 } // end anonymous namespace
 
 Base::Base()
-  : m_freq1('a')
-  , m_freq2('a')
+  : m_desired_freq('a', 'a')
   , m_initialized(false)
   , m_dev(nullptr) {
 }
@@ -234,11 +234,14 @@ Base::~Base() {
 }
 
 void Base::set_frequency(char freq1, char freq2) {
+  freq1 = ::tolower(freq1);
+  freq2 = ::tolower(freq2);
+
   if (!is_valid_freq_char(freq1) || !is_valid_freq_char(freq2)) {
     throw PollException("invalid frequency specification");
   }
-  m_freq1 = freq1;
-  m_freq2 = freq2;
+
+  m_desired_freq = Frequency(freq1, freq2);
 }
 
 void Base::initialize() {
@@ -283,11 +286,14 @@ void Base::set_screen(const std::string &s, unsigned line) {
 }
 
 void Base::start_poll(PollType poll_type) {
+  // make sure the current base station frequency is the correct one
+  if (m_current_freq != m_desired_freq) {
+    send_set_frequency();
+  }
+
   send_command_sequence(START_POLL_COMMAND_SEQUENCE_A);
   send_set_poll_type(poll_type);
   send_command_sequence(START_POLL_COMMAND_SEQUENCE_B);
-
-  // TODO: clear the display in preparation for summarizing responses?
 }
 
 void Base::stop_poll() {
@@ -433,7 +439,7 @@ void Base::send_command_sequence(const std::vector<Message> &cmd_seq) {
 void Base::send_set_frequency() {
   // set the base station frequency
 
-  Message msg1 = {0x01, 0x10, UC(0x21 + (m_freq1 - 'a')), UC(0x41 + (m_freq2 - 'a'))};
+  Message msg1 = {0x01, 0x10, UC(0x21 + (m_desired_freq.freq1 - 'a')), UC(0x41 + (m_desired_freq.freq2 - 'a'))};
   sleep(200);
   synchronous_send(msg1, 100);
 
@@ -442,6 +448,8 @@ void Base::send_set_frequency() {
   synchronous_send(msg2, 100);
 
   sleep(200);
+
+  m_current_freq = m_desired_freq;
 }
 
 void Base::send_set_protocol_version() {
