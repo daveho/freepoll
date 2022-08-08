@@ -35,6 +35,7 @@
 namespace {
 
 const int PLAY_STOP_BUTTON = 100;
+const int COURSE_LIST = 101;
 
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
 wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
@@ -50,7 +51,7 @@ PollView::PollView(wxWindow *parent, PollModel *model)
   , m_poll_runner(nullptr) {
   wxBoxSizer *vlayout = new wxBoxSizer(wxVERTICAL);
 
-  m_course_list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, 32));
+  m_course_list = new wxChoice(this, COURSE_LIST, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, 32));
   for (Course *course : m_model->get_datastore()->get_courses()) {
     m_course_list->Append(course->get_display_string(), course);
   }
@@ -117,6 +118,8 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     // change play/stop button bitmap
     m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
 
+    // TODO: make sure base station frequency is set appropriately
+
     // start poll
     m_poll_runner = new PollRunner(m_model->get_base(), m_model->get_poll());
     m_poll_runner->start_poll();
@@ -135,9 +138,12 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     m_poll_runner = nullptr;
 
     // write poll results to files
+#if 0
     int sel_course = m_course_list->GetSelection();
     assert(sel_course >= 0 && sel_course < int(m_model->get_datastore()->get_courses().size()));
     Course *course = m_model->get_datastore()->get_courses().at(sel_course);
+#endif
+    Course *course = m_model->get_current_course();
     try {
       m_model->get_datastore()->write_poll_results(course, m_model->get_poll());
     } catch (PollException &ex) {
@@ -149,6 +155,11 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
   }
 }
 
+void PollView::on_selected_course_change(wxCommandEvent &evt) {
+  m_model->set_current_course(unsigned(m_course_list->GetSelection()));
+}
+
 wxBEGIN_EVENT_TABLE(PollView, wxPanel)
   EVT_BUTTON(PLAY_STOP_BUTTON, PollView::on_play_stop_button)
+  EVT_CHOICE(COURSE_LIST, PollView::on_selected_course_change)
 wxEND_EVENT_TABLE()

@@ -25,6 +25,7 @@ class DataStore;
 class Base;
 class Poll;
 class Timer;
+class Course;
 
 // PollModel is a unified model object for PollView.
 // It aggregates Base, Poll, and Timer, and unifies their notifications.
@@ -39,24 +40,33 @@ private:
   Base *m_base;
   Poll *m_poll;
   Timer *m_timer;
+  unsigned m_selected_course;
 
 public:
-  // note that the notification hints sent by this object
-  // just use the hint values from Poll and Timer,
-  // which are distinct
+  // note that each observable object has a distinct range of hint
+  // values, so the hint values for "rebroadcast" notifications from
+  // Poll and Timer are used as-is
+
+  // these are the hints that are specific to PollModel
+  enum {
+    POLL_MODEL_SELECTED_COURSE_CHANGED = 3000,
+  };
 
   PollModel(DataStore *datastore);
   virtual ~PollModel();
 
   // FIXME: there should be some state/lifecycle functions here
 
-  bool is_poll_running();
-  bool can_start_poll();
+  bool is_poll_running() const;
+  bool can_start_poll() const;
 
-  DataStore *get_datastore();
-  Base *get_base();
-  Poll *get_poll();
-  Timer *get_timer();
+  Course *get_current_course() const;
+  void set_current_course(unsigned selected_course);
+
+  DataStore *get_datastore() const;
+  Base *get_base() const;
+  Poll *get_poll() const;
+  Timer *get_timer() const;
 
   virtual void on_update(Observable *observable, int hint);
 };

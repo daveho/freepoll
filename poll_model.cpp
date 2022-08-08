@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include <cassert>
 #include "datastore.h"
 #include "base.h"
 #include "poll.h"
@@ -25,7 +26,8 @@ PollModel::PollModel(DataStore *datastore)
   : m_datastore(datastore)
   , m_base(new Base())
   , m_poll(new Poll())
-  , m_timer(new Timer()) {
+  , m_timer(new Timer())
+  , m_selected_course(0) {
   m_poll->add_observer(this);
   m_timer->add_observer(this);
 }
@@ -39,28 +41,38 @@ PollModel::~PollModel() {
   delete m_base;
 }
 
-bool PollModel::is_poll_running() {
+bool PollModel::is_poll_running() const {
   return m_poll->is_started() && !m_poll->is_stopped();
 }
 
-bool PollModel::can_start_poll() {
+bool PollModel::can_start_poll() const {
   // TODO: could check whether the base station is connected
   return !is_poll_running();
 }
 
-DataStore *PollModel::get_datastore() {
+Course *PollModel::get_current_course() const {
+  return m_datastore->get_courses().at(m_selected_course);
+}
+
+void PollModel::set_current_course(unsigned selected_course) {
+  assert(selected_course < m_datastore->get_courses().size());
+  m_selected_course = selected_course;
+  notify_observers(POLL_MODEL_SELECTED_COURSE_CHANGED);
+}
+
+DataStore *PollModel::get_datastore() const {
   return m_datastore;
 }
 
-Base *PollModel::get_base() {
+Base *PollModel::get_base() const {
   return m_base;
 }
 
-Poll *PollModel::get_poll() {
+Poll *PollModel::get_poll() const {
   return m_poll;
 }
 
-Timer *PollModel::get_timer() {
+Timer *PollModel::get_timer() const {
   return m_timer;
 }
 

@@ -45,6 +45,7 @@ public:
 
 private:
   void on_play_stop_button(wxCommandEvent &evt);
+  void on_selected_course_change(wxCommandEvent &evt);
 
   wxDECLARE_EVENT_TABLE();
 };
