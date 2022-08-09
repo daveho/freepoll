@@ -29,6 +29,7 @@
 #include "poll.h"
 #include "rapidcsv.h"
 #include "exception.h"
+#include "datatypes.h"
 #include "datastore.h"
 
 namespace fs = std::filesystem;
@@ -204,6 +205,11 @@ void DataStore::load_course(const std::string &course_dir, const std::string &co
       } else if (key == "active") {
         std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c){ return ::tolower(c); });
         course->set_active(value == "true");
+      } else if (key == "frequency") {
+        if (value.size() != 2 || !is_valid_freq_char(value[0]) || !is_valid_freq_char(value[1])) {
+          throw PollException("Invalid frequency code " + value);
+        }
+        course->set_frequency(value);
       } else {
         std::cerr << "Unknown key " << key << " in " << courseinfo_filename << "\n";
       }

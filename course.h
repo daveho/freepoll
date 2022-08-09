@@ -28,6 +28,7 @@ private:
   int m_section;               // e.g. 1
   int m_year;                  // e.g. 2022
   std::string m_directory;     // e.g. /home/daveho/FreePoll/CSF-Fall2022-Sec01
+  std::string m_frequency;     // e.g. AA
   bool m_active;               // true if this is an active course (and should be shown in the GUI)
 
 public:
@@ -47,6 +48,7 @@ public:
   int get_section() const              { return m_section; }
   int get_year() const                 { return m_year; }
   std::string get_directory() const    { return m_directory; }
+  std::string get_frequency() const    { return m_frequency; }
   bool is_active() const               { return m_active; }
 
   std::string get_display_string() const;
@@ -57,6 +59,7 @@ public:
   void set_section(int section)                          { m_section = section; }
   void set_year(int year)                                { m_year = year; }
   void set_directory(const std::string &directory)       { m_directory = directory; }
+  void set_frequency(const std::string &freqency)        { m_frequency = freqency; }
   void set_active(bool active)                           { m_active = active; }
 
   bool operator<(const Course &rhs) const;

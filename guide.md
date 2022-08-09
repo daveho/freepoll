@@ -44,14 +44,16 @@ term_num,6
 section,1
 year,2022
 active,true
+frequency,AA
 ```
 
 Edit these values as appropriate for each course. Note that `term_num` is used
 for sorting your courses chronologically. Terms that are later in the calendar
 year should have higher values that earlier terms.
 
-**Issue**: the `courseinfo.csv` needs to be able to specify the
-base station frequency code. Currently FreePoll is hard-coded to use `AA`.
+Note that the base station frequency will default to AA if you do not explicitly
+specify the frequency. If you specify a non-default frequency, FreePoll will
+use that frequency for all polls when you select the course in the UI.
 
 ### Symlinks are OK!
 
@@ -110,3 +112,6 @@ The timestamp values are number of milliseconds since the Unix epoch.
 FreePoll doesn't have any notion of student identities. It only knows about
 iClicker remote IDs.  You'll need to have students tell you iClicker remote
 IDs.
+
+**Issue**: eventually FreePoll will save a desktop screenshot image when the poll
+starts, but this isn't implemented yet.

@@ -30,6 +30,7 @@
 #include "datastore.h"
 #include "course.h"
 #include "exception.h"
+#include "base.h"
 #include "poll_view.h"
 
 namespace {
@@ -118,7 +119,10 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     // change play/stop button bitmap
     m_poll_control_btn->SetBitmap(STOP_BUTTON_BITMAP);
 
-    // TODO: make sure base station frequency is set appropriately
+    // make sure base station frequency is set appropriately
+    Course *course = m_model->get_current_course();
+    std::string freq = course->get_frequency();
+    m_model->get_base()->set_frequency(freq[0], freq[1]);
 
     // start poll
     m_poll_runner = new PollRunner(m_model->get_base(), m_model->get_poll());
@@ -138,16 +142,12 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     m_poll_runner = nullptr;
 
     // write poll results to files
-#if 0
-    int sel_course = m_course_list->GetSelection();
-    assert(sel_course >= 0 && sel_course < int(m_model->get_datastore()->get_courses().size()));
-    Course *course = m_model->get_datastore()->get_courses().at(sel_course);
-#endif
     Course *course = m_model->get_current_course();
     try {
       m_model->get_datastore()->write_poll_results(course, m_model->get_poll());
     } catch (PollException &ex) {
       std::cerr << "Error writing poll data: " << ex.what() << "\n";
+      // TODO: probably should display the error in the GUI somehow
     }
 
     // re-enable course selection

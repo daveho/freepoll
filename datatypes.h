@@ -34,4 +34,9 @@ typedef uint64_t Timestamp;
 // Version string
 #define FREEPOLL_VERSION "0.00"
 
+// check whether give character is a valid frequency code
+inline bool is_valid_freq_char(char c) {
+  return (c >= 'a' && c <= 'd') || (c >= 'A' && c <= 'D');
+}
+
 #endif // DATATYPES_H
