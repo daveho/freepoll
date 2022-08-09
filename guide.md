@@ -61,7 +61,7 @@ Rather than creating your course directories as actual subdirectories of
 `~/FreePoll`, they can be symlinks that point elsewhere. For example:
 
 ```bash
-ln -s ~/git/csf-fall2022-private/clicker_data/sec01 ~/FreePoll/CSF-Fall2022-Sec01`
+ln -s ~/git/csf-fall2022-private/clicker_data/sec01 ~/FreePoll/CSF-Fall2022-Sec01
 ```
 
 I recommend doing this, because that way FreePoll will save your clicker data in
@@ -109,9 +109,17 @@ the final response for each iClicker remote. `all_responses.csv` contains
 all responses submitted for each iClicker remote, with a timestamp.
 The timestamp values are number of milliseconds since the Unix epoch.
 
+The poll directory will also contain an image file called `screenshot.png`
+which is a desktop screenshot taken at the beginning of the poll.
+To capture the screenshot, FreePoll will look for executables
+`/usr/bin/scrot` or `/usr/bin/import`. Either of these programs should
+work.  To install these programs on Debian or Ubuntu:
+
+```
+sudo apt install scrot
+sudo apt install imagemagick
+```
+
 FreePoll doesn't have any notion of student identities. It only knows about
 iClicker remote IDs.  You'll need to have students tell you iClicker remote
 IDs.
-
-**Issue**: eventually FreePoll will save a desktop screenshot image when the poll
-starts, but this isn't implemented yet.

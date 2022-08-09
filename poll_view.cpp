@@ -17,6 +17,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <filesystem>
 #include <wx/bitmap.h>
 #include <wx/sizer.h>
 #include "play_button_icon.h"
@@ -124,11 +125,19 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     std::string freq = course->get_frequency();
     m_model->get_base()->set_frequency(freq[0], freq[1]);
 
+    // create a data directory for this poll
+    std::string poll_data_dir = m_model->get_datastore()->create_poll_data_dir(course);
+
+    // make a note of the poll data directory, since we'll need to
+    // refer to it again when the poll ends
+    m_model->set_poll_data_dir(poll_data_dir);
+
+    // take a screenshot
+    m_model->get_datastore()->take_screenshot(poll_data_dir);
+
     // start poll
     m_poll_runner = new PollRunner(m_model->get_base(), m_model->get_poll());
     m_poll_runner->start_poll();
-
-    // TODO: save screenshot
   } else if (m_model->is_poll_running()) {
     // stop timer
     m_model->get_timer()->stop();
@@ -142,13 +151,16 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
     m_poll_runner = nullptr;
 
     // write poll results to files
-    Course *course = m_model->get_current_course();
+    std::string poll_data_dir = m_model->get_poll_data_dir();
     try {
-      m_model->get_datastore()->write_poll_results(course, m_model->get_poll());
+      m_model->get_datastore()->write_poll_results(poll_data_dir, m_model->get_poll());
     } catch (PollException &ex) {
       std::cerr << "Error writing poll data: " << ex.what() << "\n";
       // TODO: probably should display the error in the GUI somehow
     }
+
+    // poll is done
+    m_model->set_poll_data_dir("");
 
     // re-enable course selection
     m_course_list->Enable(true);

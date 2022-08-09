@@ -60,6 +60,14 @@ void PollModel::set_current_course(unsigned selected_course) {
   notify_observers(POLL_MODEL_SELECTED_COURSE_CHANGED);
 }
 
+void PollModel::set_poll_data_dir(const std::string &poll_data_dir) {
+  m_poll_data_dir = poll_data_dir;
+}
+
+std::string PollModel::get_poll_data_dir() const {
+  return m_poll_data_dir;
+}
+
 DataStore *PollModel::get_datastore() const {
   return m_datastore;
 }

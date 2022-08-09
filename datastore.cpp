@@ -30,6 +30,7 @@
 #include "rapidcsv.h"
 #include "exception.h"
 #include "datatypes.h"
+#include "screenshot.h"
 #include "datastore.h"
 
 namespace fs = std::filesystem;
@@ -72,7 +73,7 @@ void DataStore::locate_courses() {
             [](Course *lhs, Course *rhs) { return *lhs < *rhs; });
 }
 
-void DataStore::write_poll_results(Course *course, const Poll *poll) {
+std::string DataStore::create_poll_data_dir(Course *course) {
   // Get date (year, month, day) in local time
   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
   time_t tt = std::chrono::system_clock::to_time_t(now);
@@ -127,9 +128,22 @@ void DataStore::write_poll_results(Course *course, const Poll *poll) {
     throw PollException("Could not create poll directory " + poll_dir.string());
   }
 
+  return poll_dir.string();
+}
+
+void DataStore::take_screenshot(const std::string &poll_data_dir) {
+  fs::path poll_dir(poll_data_dir);
+
+  fs::path screenshot_path = poll_dir / "screenshot.png";
+  Screenshot::take_screenshot(screenshot_path.string());
+}
+
+void DataStore::write_poll_results(const std::string &poll_data_dir, const Poll *poll) {
   // Write CSV files. Note that because the data doesn't contain any
   // arbitrary strings or special characters, writing using ofstreams
   // should be fine.
+
+  fs::path poll_dir(poll_data_dir);
 
   // Write responses.csv
   {

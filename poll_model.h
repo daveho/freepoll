@@ -41,6 +41,7 @@ private:
   Poll *m_poll;
   Timer *m_timer;
   unsigned m_selected_course;
+  std::string m_poll_data_dir;
 
 public:
   // note that each observable object has a distinct range of hint
@@ -62,6 +63,9 @@ public:
 
   Course *get_current_course() const;
   void set_current_course(unsigned selected_course);
+
+  void set_poll_data_dir(const std::string &poll_data_dir);
+  std::string get_poll_data_dir() const;
 
   DataStore *get_datastore() const;
   Base *get_base() const;

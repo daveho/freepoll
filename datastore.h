@@ -45,8 +45,18 @@ public:
 
   const std::vector<Course *> &get_courses() const { return m_courses; }
 
+  // create a new data directory in which to save poll data
+  // for specified course
+  std::string create_poll_data_dir(Course *course);
+
+  // take a screenshot and save it in specified poll data directory
+  void take_screenshot(const std::string &poll_data_dir);
+
   // TODO: functions for creating and saving screenshot and clicker data
-  void write_poll_results(Course *course, const Poll *poll);
+  //void write_poll_results(Course *course, const Poll *poll);
+
+  // write poll results files in specified poll data directory
+  void write_poll_results(const std::string &poll_data_dir, const Poll *poll);
 
 private:
   void load_course(const std::string &course_dir, const std::string &courseinfo_filename);
