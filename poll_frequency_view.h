@@ -15,41 +15,36 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef POLL_VIEW_H
-#define POLL_VIEW_H
+#ifndef POLL_FREQUENCY_VIEW_H
+#define POLL_FREQUENCY_VIEW_H
 
 #include <wx/panel.h>
-#include <wx/button.h>
-#include <wx/choice.h>
+#include <wx/stattext.h>
 #include "observer.h"
 
 class PollModel;
-class TimerView;
-class PollResponseCountView;
-class PollFrequencyView;
-class PollRunner;
 
-class PollView : public wxPanel, public Observer {
+// PollFrequencyView observes the PollModel and reports the base
+// station frequency used by the selected course.
+// It also observes the Poll so that it can change the text
+// color depending on whether or not the poll is active.
+
+class PollFrequencyView : public wxPanel, public Observer {
 private:
   PollModel *m_model;
-  wxChoice *m_course_list;
-  wxButton *m_poll_control_btn;
-  TimerView *m_timer_view;
-  PollResponseCountView *m_poll_response_count_view;
-  PollFrequencyView *m_poll_frequency_view;
-  PollRunner *m_poll_runner;
+  wxStaticText *m_label;
+  bool m_poll_is_active;
 
 public:
-  PollView(wxWindow *parent, PollModel *model);
-  virtual ~PollView();
+  PollFrequencyView(wxWindow *parent, PollModel *model);
+  virtual ~PollFrequencyView();
 
   virtual void on_update(Observable *observable, int hint);
 
 private:
-  void on_play_stop_button(wxCommandEvent &evt);
-  void on_selected_course_change(wxCommandEvent &evt);
-
   wxDECLARE_EVENT_TABLE();
+
+  void on_model_update(wxCommandEvent &evt);
 };
 
-#endif // POLL_VIEW_H
+#endif // POLL_FREQUENCY_VIEW_H

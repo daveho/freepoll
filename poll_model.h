@@ -18,6 +18,7 @@
 #ifndef POLL_MODEL_H
 #define POLL_MODEL_H
 
+#include <string>
 #include "observer.h"
 #include "observable.h"
 

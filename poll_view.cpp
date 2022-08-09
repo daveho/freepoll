@@ -32,6 +32,7 @@
 #include "course.h"
 #include "exception.h"
 #include "base.h"
+#include "poll_frequency_view.h"
 #include "poll_view.h"
 
 namespace {
@@ -84,6 +85,14 @@ PollView::PollView(wxWindow *parent, PollModel *model)
   items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->get_poll()->add_observer(m_poll_response_count_view);
+
+  items->AddSpacer(40);
+  m_poll_frequency_view = new PollFrequencyView(this, m_model);
+  items->Add(m_poll_frequency_view, 0, wxALL|wxALIGN_CENTRE);
+
+  m_model->add_observer(m_poll_frequency_view);
+  m_model->get_poll()->add_observer(m_poll_frequency_view);
+
   vlayout->Add(items);
 
   SetSizer(vlayout);
@@ -92,6 +101,9 @@ PollView::PollView(wxWindow *parent, PollModel *model)
 PollView::~PollView() {
   m_model->get_timer()->remove_observer(m_timer_view);
   m_model->get_poll()->remove_observer(m_poll_response_count_view);
+
+  m_model->remove_observer(m_poll_frequency_view);
+  m_model->get_poll()->remove_observer(m_poll_frequency_view);
 
   delete m_model;
 }
