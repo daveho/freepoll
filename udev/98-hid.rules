@@ -1,0 +1,2 @@
+# Give any user permission to access the iClicker hub
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1881", ATTRS{idProduct}=="0152", MODE="0666"
