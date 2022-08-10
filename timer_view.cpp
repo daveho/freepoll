@@ -19,13 +19,12 @@
 #include <sstream>
 #include <iomanip>
 #include "timer.h"
+#include "gui_common.h"
 #include "timer_view.h"
 
 namespace {
 
 const int TIMER_UPDATED = 200;
-
-const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
 
 }
 
@@ -35,7 +34,7 @@ const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
 TimerView::TimerView(wxWindow *parent, Timer *timer)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(100, 44))
   , m_timer(timer) {
-  SetFont(GetFont().Scale(2.5));
+  SetFont(GetFont().Scale(FONT_SCALING_FACTOR));
   m_label = new wxStaticText(this, wxID_ANY, "0:00");
   m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
 }

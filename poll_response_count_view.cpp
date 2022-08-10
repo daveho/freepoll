@@ -17,20 +17,19 @@
 
 #include <sstream>
 #include "poll.h"
+#include "gui_common.h"
 #include "poll_response_count_view.h"
 
 namespace {
 
 const int POLL_UPDATED = 400;
 
-const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
-
 }
 
 PollResponseCountView::PollResponseCountView(wxWindow *parent, Poll *poll)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(80, 44))
   , m_poll(poll) {
-  SetFont(GetFont().Scale(2.5));
+  SetFont(GetFont().Scale(FONT_SCALING_FACTOR));
   m_label = new wxStaticText(this, wxID_ANY, "0");
 
   m_label->SetForegroundColour(LIGHT_TEXT_COLOR);

@@ -43,8 +43,13 @@ const int COURSE_LIST = 101;
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
 wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 
-const int POLL_VIEW_WIDTH = 400;
-const int POLL_VIEW_HEIGHT = 116;
+const int POLL_VIEW_WIDTH = 350;
+const int POLL_VIEW_HEIGHT = 100;
+
+const int COURSE_LIST_HEIGHT = 28;
+
+const int H_SEP_SMALL = 10;
+const int H_SEP_LARGE = 24;
 
 }
 
@@ -54,39 +59,39 @@ PollView::PollView(wxWindow *parent, PollModel *model)
   , m_poll_runner(nullptr) {
   wxBoxSizer *vlayout = new wxBoxSizer(wxVERTICAL);
 
-  m_course_list = new wxChoice(this, COURSE_LIST, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, 32));
+  m_course_list = new wxChoice(this, COURSE_LIST, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, COURSE_LIST_HEIGHT));
   for (Course *course : m_model->get_datastore()->get_courses()) {
     m_course_list->Append(course->get_display_string(), course);
   }
   m_course_list->SetSelection(0);
   vlayout->Add(m_course_list, 0, wxEXPAND);
 
-  vlayout->AddSpacer(8);
+  vlayout->AddSpacer(2);
 
   wxBoxSizer *items = new wxBoxSizer(wxHORIZONTAL);
 
-  items->AddSpacer(10);
+  items->AddSpacer(H_SEP_SMALL);
 
   m_poll_control_btn = new wxButton(this, PLAY_STOP_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
   m_poll_control_btn->SetBitmap(PLAY_BUTTON_BITMAP);
 
   items->Add(m_poll_control_btn, 0, wxALL|wxALIGN_CENTRE);
 
-  items->AddSpacer(10);
+  items->AddSpacer(H_SEP_SMALL);
 
   m_timer_view = new TimerView(this, m_model->get_timer());
   items->Add(m_timer_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->get_timer()->add_observer(m_timer_view);
 
-  items->AddSpacer(40);
+  items->AddSpacer(H_SEP_LARGE);
 
   m_poll_response_count_view = new PollResponseCountView(this, m_model->get_poll());
   items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->get_poll()->add_observer(m_poll_response_count_view);
 
-  items->AddSpacer(40);
+  items->AddSpacer(H_SEP_LARGE);
   m_poll_frequency_view = new PollFrequencyView(this, m_model);
   items->Add(m_poll_frequency_view, 0, wxALL|wxALIGN_CENTRE);
 

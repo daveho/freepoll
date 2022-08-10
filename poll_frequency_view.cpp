@@ -19,13 +19,12 @@
 #include "poll.h"
 #include "poll_model.h"
 #include "course.h"
+#include "gui_common.h"
 #include "poll_frequency_view.h"
 
 namespace {
 
 const int POLL_OR_COURSE_UPDATED = 500;
-
-const wxColor LIGHT_TEXT_COLOR(128, 128, 128);
 
 std::string display_frequency(Course *course) {
   std::string freq = course->get_frequency();
@@ -40,7 +39,7 @@ PollFrequencyView::PollFrequencyView(wxWindow *parent, PollModel *model)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(56, 44))
   , m_model(model)
   , m_poll_is_active(false) {
-  SetFont(GetFont().Scale(2.5));
+  SetFont(GetFont().Scale(FONT_SCALING_FACTOR));
   std::string freq_str = display_frequency(m_model->get_current_course());
   m_label = new wxStaticText(this, wxID_ANY, freq_str);
   m_label->SetForegroundColour(LIGHT_TEXT_COLOR);
