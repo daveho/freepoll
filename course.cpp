@@ -56,15 +56,31 @@ std::string Course::get_display_string() const {
 if (fieldname < rhs.fieldname) return true; \
 if (fieldname > rhs.fieldname) return false
 
+#define COMPARE_REVERSE(fieldname) \
+if (fieldname > rhs.fieldname) return true; \
+if (fieldname < rhs.fieldname) return false
+
 bool Course::operator<(const Course &rhs) const {
   // order active courses before inactive ones
   if (m_active != rhs.m_active) { return m_active; }
 
-  COMPARE(m_year);
-  COMPARE(m_term_num);
-  COMPARE(m_term_display);
+  // we want reverse-chronological order, so that the most
+  // recent courses are at the top of the list
+  COMPARE_REVERSE(m_year);
+  COMPARE_REVERSE(m_term_num);
+
+  // for courses in the same term, sort by title and section
   COMPARE(m_title);
   COMPARE(m_section);
+
+  // in general, this comparison shouldn't be significant,
+  // since courses with the same term number should also have
+  // the same term display name
+  COMPARE(m_term_display);
+
+  // this comparison also shouldn't be significant, since if
+  // it's reached, it implies that there are courses with identical
+  // information in two different directories
   COMPARE(m_directory);
 
   return false;
