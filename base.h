@@ -22,28 +22,13 @@
 #include <string>
 #include <hidapi.h>
 #include "message.h"
+#include "frequency.h"
 #include "response_callback.h"
 
 // Encapsulation of iClicker base station
 
 class Base {
 private:
-  struct Frequency {
-    char freq1, freq2;
-
-    Frequency() : freq1(0), freq2(0) { }
-
-    Frequency(char freq1, char freq2) : freq1(freq1), freq2(freq2) { }
-
-    bool operator==(const Frequency &rhs) const {
-      return freq1 == rhs.freq1 && freq2 == rhs.freq2;
-    }
-
-    bool operator!=(const Frequency &rhs) const {
-      return !(*this == rhs);
-    }
-  };
-
   Frequency m_desired_freq, m_current_freq;
   bool m_initialized;
   hid_device *m_dev;
@@ -62,7 +47,7 @@ public:
   Base();
   ~Base();
 
-  void set_frequency(char freq1, char freq2);
+  void set_frequency(const Frequency &freq);
   void initialize();
 
   void set_screen(const std::string &s, unsigned line);

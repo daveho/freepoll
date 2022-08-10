@@ -15,23 +15,32 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef DATATYPES_H
-#define DATATYPES_H
+#include <cctype>
+#include "exception.h"
+#include "frequency.h"
 
-#include <cstdint>
+// note that this constructor creates a Frequency value
+// that is not valid
+Frequency::Frequency() {
+}
 
-// remote ID
-typedef uint32_t RemoteID;
+// initialize a Frequency from a two-letter frequency code:
+// throws an exception if the code is not valid
+Frequency::Frequency(const std::string &freq_str) {
+  if (freq_str.size() != 2) {
+    throw PollException("Invalid frequency code: " + freq_str);
+  }
 
-// multiple choice option
-enum class Option {
-  A, B, C, D, E,
-};
+  char freq1 = ::toupper(freq_str[0]);
+  char freq2 = ::toupper(freq_str[1]);
 
-// timestamp: milliseconds since the Unix epoch
-typedef uint64_t Timestamp;
+  if (!is_valid_freq_char(freq1) || !is_valid_freq_char(freq2)) {
+    throw PollException("Invalid frequency code: " + freq_str);
+  }
 
-// Version string
-#define FREEPOLL_VERSION "0.00"
+  m_freq += freq1;
+  m_freq += freq2;
+}
 
-#endif // DATATYPES_H
+Frequency::~Frequency() {
+}

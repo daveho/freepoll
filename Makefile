@@ -1,7 +1,7 @@
 CXXFLAGS = -g -Wall -std=c++17 -I/usr/include/hidapi $(shell wx-config --cxxflags)
 CXX = g++
 
-COMMON_SRCS = poll.cpp base.cpp exception.cpp message.cpp \
+COMMON_SRCS = poll.cpp base.cpp frequency.cpp exception.cpp message.cpp \
 	response_callback.cpp poll_response_collector.cpp poll_runner.cpp \
 	observable.cpp observer.cpp timer.cpp datastore.cpp course.cpp \
 	screenshot.cpp

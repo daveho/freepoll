@@ -27,7 +27,7 @@ namespace {
 const int POLL_OR_COURSE_UPDATED = 500;
 
 std::string display_frequency(Course *course) {
-  std::string freq = course->get_frequency();
+  std::string freq = course->get_frequency().str();
   freq[0] = ::toupper(freq[0]);
   freq[1] = ::toupper(freq[1]);
   return freq;

@@ -139,8 +139,7 @@ void PollView::on_play_stop_button(wxCommandEvent &evt) {
 
     // make sure base station frequency is set appropriately
     Course *course = m_model->get_current_course();
-    std::string freq = course->get_frequency();
-    m_model->get_base()->set_frequency(freq[0], freq[1]);
+    m_model->get_base()->set_frequency(course->get_frequency());
 
     // create a data directory for this poll
     std::string poll_data_dir = m_model->get_datastore()->create_poll_data_dir(course);

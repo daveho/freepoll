@@ -232,7 +232,7 @@ const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 500;
 } // end anonymous namespace
 
 Base::Base()
-  : m_desired_freq('a', 'a')
+  : m_desired_freq("AA")
   , m_initialized(false)
   , m_dev(nullptr) {
 }
@@ -247,15 +247,8 @@ Base::~Base() {
   }
 }
 
-void Base::set_frequency(char freq1, char freq2) {
-  freq1 = ::tolower(freq1);
-  freq2 = ::tolower(freq2);
-
-  if (!is_valid_freq_char(freq1) || !is_valid_freq_char(freq2)) {
-    throw PollException("invalid frequency specification");
-  }
-
-  m_desired_freq = Frequency(freq1, freq2);
+void Base::set_frequency(const Frequency &freq) {
+  m_desired_freq = freq;
 }
 
 void Base::initialize() {
@@ -454,7 +447,7 @@ void Base::send_command_sequence(const std::vector<Message> &cmd_seq) {
 void Base::send_set_frequency() {
   // set the base station frequency
 
-  Message msg1 = {0x01, 0x10, UC(0x21 + (m_desired_freq.freq1 - 'a')), UC(0x41 + (m_desired_freq.freq2 - 'a'))};
+  Message msg1 = {0x01, 0x10, UC(0x21 + (m_desired_freq.get_freq1() - 'A')), UC(0x41 + (m_desired_freq.get_freq2() - 'A'))};
   sleep(200);
   synchronous_send(msg1, 100);
 
