@@ -18,7 +18,7 @@ FreePoll will access your iClicker base station using libusb/hidapi.
 You will need to add a udev rule to allow an ordinary user account
 to access the device. The file [udev/98-iclicker.rules](udev/98-iclicker.rules)
 contains the udev rule I use on my laptop running Linux Mint 20.
-You can install it as followed:
+You can install it as follows:
 
 ```
 sudo cp udev/98-iclicker.rules /etc/udev/rules.d/
