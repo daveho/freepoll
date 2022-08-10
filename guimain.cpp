@@ -97,7 +97,7 @@ bool FreePollApp::OnInit()
     return false;
   }
 
-  FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION, model );
+  FreePollFrame *frame = new FreePollFrame( "FreePoll v" FREEPOLL_VERSION, model );
   frame->Show( true );
   return true;
 }

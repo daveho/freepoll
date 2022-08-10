@@ -12,25 +12,30 @@ use to run clicker quizzes from a Linux system.
 If you're interested in trying out FreePoll, first [compile it](#compilation),
 then you can refer to the [Guide](guide.md) for details on how to use it.
 
-FreePoll was basically written in one weekend, so almost certainly there
+FreePoll should be considered as alpha-quality software, and it's likely there
 are bugs. [Let me know](#contact) if you run into any.
 
 # Who might find FreePoll useful?
 
 If you use [Peer Instruction](https://mazur.harvard.edu/research-areas/peer-instruction)
 in your teaching, and you either run Linux or prefer to use open source software,
-FreePoll might be useful to you.  See the [Why](#why) section.
+FreePoll might be useful to you.  See the [Why](#why) section for some more
+background.
 
 # Compilation
 
-On Linux, you will need the libusb/hidapi development package and the
-wxWidgets development package to be installed.  On Debian or Ubuntu:
+On Linux, you will need
+
+* g++
+* make
+* the libusb/hidapi development package
+* the wxWidgets GTK3 development package
+
+On Debian or Ubuntu:
 
 ```
-sudo apt install libhidapi-dev libwxgtk3.0-gtk3-dev
+sudo apt install g++ make libhidapi-dev libwxgtk3.0-gtk3-dev
 ```
-
-You'll also need `g++` and `make`.
 
 To compile the program:
 
@@ -42,7 +47,9 @@ make -j
 (The `-j` option is just so `make` uses all of your CPU cores.)
 
 The command line executable is called `freepoll`, and the GUI executable
-is called `freepoll-gui`.
+is called `freepoll-gui`. (Note that the command line executable is
+just a test program, and you'll almost certainly want to use
+`freepoll-gui`.)
 
 # Why?
 
@@ -74,11 +81,11 @@ indicated which are the correct answers, you can find out who answered
 the question correctly. But you can't actually find out which specific
 choices the students made in their responses! (I am trying to avoid going
 into an extended rant about how frustrating this is. Suffice it to say
-that I think this is ridiculous and stupid.)
+that I think this is a ridiculous limitation.)
 
 So, what I want is a portable, open source client program that gives
-me full access to the students' responses.  This is what I would like
-FreePoll to be.
+me full access to the students' responses.  This is what FreePoll
+is intended to be.
 
 # Technical details
 
@@ -93,7 +100,7 @@ run and the responses written to a CSV file.
 My contribution was translating Jason's work to C++, and then writing
 a simple GUI for running polls.  The GUI is implemented using
 [wxWidgets](https://www.wxwidgets.org/).  Note that it's only been
-tested on Linux using GTK3.
+tested on Linux using wxGTK.
 
 The iClicker base station appears as a Human Interface Device (HID),
 which is probably the easiest kind of USB device to communicate with.
