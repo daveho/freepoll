@@ -38,6 +38,9 @@ private:
 public:
   virtual ~FreePollApp();
   virtual bool OnInit();
+
+private:
+  void show_error_dialog(const wxString &msg);
 };
 
 class FreePollFrame: public wxFrame
@@ -74,13 +77,11 @@ bool FreePollApp::OnInit()
 
   unsigned num_courses_located = unsigned(m_datastore->get_courses().size());
   if (num_courses_located == 0) {
-    wxMessageDialog *dialog = new wxMessageDialog(NULL, wxT("No courses found"), wxT("Error"), wxOK | wxICON_ERROR);
-    dialog->ShowModal();
-    delete dialog;
+    show_error_dialog(wxT("No courses found"));
     return false;
   }
 
-  std::cout << "Found " << num_courses_located << " course(s)\n";
+  //std::cout << "Found " << num_courses_located << " course(s)\n";
 
   PollModel *model = new PollModel(m_datastore);
 
@@ -90,13 +91,20 @@ bool FreePollApp::OnInit()
   try {
     model->get_base()->initialize();
   } catch (PollException &ex) {
-    std::cerr << "Could not initialize base station: " << ex.what() << "\n";
+    //std::cerr << "Could not initialize base station: " << ex.what() << "\n";
+    show_error_dialog(wxT("Error: ") + wxString(ex.what()));
     return false;
   }
 
   FreePollFrame *frame = new FreePollFrame( "FreePoll " FREEPOLL_VERSION, model );
   frame->Show( true );
   return true;
+}
+
+void FreePollApp::show_error_dialog(const wxString &msg) {
+  wxMessageDialog *dialog = new wxMessageDialog(NULL, msg, wxT("Error"), wxOK | wxICON_ERROR);
+  dialog->ShowModal();
+  delete dialog;
 }
 
 FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
