@@ -46,18 +46,19 @@ private:
 class FreePollFrame: public wxFrame
 {
 private:
+  PollModel *m_model;
   PollView *m_poll_view;
 
 public:
   FreePollFrame(const wxString& title, PollModel *model);
 
 private:
-  void OnExit(wxCommandEvent& event);
+  void OnExit(wxCloseEvent& event);
   wxDECLARE_EVENT_TABLE();
 };
 
 wxBEGIN_EVENT_TABLE(FreePollFrame, wxFrame)
-  EVT_MENU(wxID_EXIT,  FreePollFrame::OnExit)
+  EVT_CLOSE(FreePollFrame::OnExit)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(FreePollApp);
@@ -110,15 +111,21 @@ void FreePollApp::show_error_dialog(const wxString &msg) {
 FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
   : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE|wxSTAY_ON_TOP)
 {
+  m_model = model;
   m_poll_view = new PollView(this, model);
-  //m_poll_view->SetBackgroundColour(wxColour(*wxBLUE));
-
   Fit();
 }
 
-void FreePollFrame::OnExit(wxCommandEvent& event)
+void FreePollFrame::OnExit(wxCloseEvent& event)
 {
-  // FIXME: should check the PollView to make sure that there is not a poll in progress
+  std::cout << "FreePollFrame::OnExit called\n";
 
-  Close( true );
+  // check the PollModel to make sure that there is not a poll in progress
+  if (event.CanVeto() && m_model->is_poll_running()) {
+    std::cout << "attempt to close FreePoll while a poll is running\n";
+    event.Veto();
+    return;
+  }
+
+  Destroy();
 }
