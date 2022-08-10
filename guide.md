@@ -12,6 +12,18 @@ As of the time of writing (August 7th, 2022), FreePoll hasn't yet been
 used in anger. I'm planning to use it in my classes in the Fall 2022 semester.
 I'm feeling reasonably confident that it will work acceptably.
 
+## udev rules
+
+FreePoll will access your iClicker base station using libusb/hidapi.
+You will need to add a udev rule to allow an ordinary user account
+to access the device. The file [udev/98-iclicker.rules](udev/98-iclicker.rules)
+contains the udev rule I use on my laptop running Linux Mint 20.
+You can install it as followed:
+
+```
+sudo cp udev/98-iclicker.rules /etc/udev/rules.d/
+```
+
 ## Create your course directories
 
 Start by creating a directory called `FreePoll` in your home directory:
