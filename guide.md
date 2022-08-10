@@ -14,8 +14,8 @@ I'm feeling reasonably confident that it will work acceptably.
 
 ## udev rules
 
-FreePoll will access your iClicker base station using libusb/hidapi.
-You will need to add a udev rule to allow an ordinary user account
+On Linux systems, FreePoll will access your iClicker base station using libusb/hidapi.
+You will probably need to add a udev rule to allow an ordinary user account
 to access the device. The file [udev/98-iclicker.rules](udev/98-iclicker.rules)
 contains the udev rule I use on my laptop running Linux Mint 20.
 You can install it as follows:
@@ -47,7 +47,7 @@ For example:
 vi ~/FreePoll/Course1/courseinfo.csv
 ```
 
-The contents should look like this:
+The contents should look something like this:
 
 ```
 title,Computer Systems Fundamentals
@@ -60,8 +60,8 @@ frequency,AA
 ```
 
 Edit these values as appropriate for each course. Note that `term_num` is used
-for sorting your courses chronologically. Terms that are later in the calendar
-year should have higher values that earlier terms.
+for sorting your courses in reverse chronological order. Terms that are later
+in the calendar year should have higher values than terms earlier in the year.
 
 Note that the base station frequency will default to AA if you do not explicitly
 specify the frequency. If you specify a non-default frequency, FreePoll will
