@@ -1,2 +1,2 @@
-# Give any user permission to access the iClicker hub
-SUBSYSTEM=="usb", ATTRS{idVendor}=="1881", ATTRS{idProduct}=="0152", MODE="0666"
+# Bus 001 Device 008: ID 1881:0152 i>clicker i>clicker USB Hub
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1881", ATTRS{idProduct}=="0805|0150", MODE="0666"
