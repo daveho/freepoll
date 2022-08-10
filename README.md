@@ -78,7 +78,8 @@ software works on Linux. In practice, it doesn't run on any recent version
 of Linux (at least in my experience.)
 
 Second, the modern [iClicker Cloud](https://www.iclicker.com/instructors/software/iclicker-cloud/)
-software only supports storing the collected data remotely (in the "cloud").
+software (which does not run on Linux systems at all) only supports storing
+the collected data remotely (in the "cloud").
 So, the instructor must create an account to use it. Amazingly,
 the data available for download does not actually contain the student
 responses! At best, you can see who participated, and if you've
