@@ -15,14 +15,14 @@ then you can refer to the [Guide](guide.md) for details on how to use it.
 FreePoll should be considered as alpha-quality software, and it's likely there
 are bugs. [Let me know](#contact) if you run into any.
 
-# Who might find FreePoll useful?
+## Who might find FreePoll useful?
 
 If you use [Peer Instruction](https://mazur.harvard.edu/research-areas/peer-instruction)
 in your teaching, and you either run Linux or prefer to use open source software,
 FreePoll might be useful to you.  See the [Why](#why) section for some more
 background.
 
-# Compilation
+## Compilation
 
 On Linux, you will need
 
@@ -46,12 +46,17 @@ make -j
 
 (The `-j` option is just so `make` uses all of your CPU cores.)
 
-The command line executable is called `freepoll`, and the GUI executable
-is called `freepoll-gui`. (Note that the command line executable is
-just a test program, and you'll almost certainly want to use
-`freepoll-gui`.)
+Two executables will be built.
 
-# Why?
+The `freepoll-gui` executable is probably the one you want to use.
+The [Guide](guide.md) explains how to configure and use this program.
+
+The `freepoll` executable is a very simple command line utility that
+runs a poll and writes the results to a CSV file. You wil need
+to use control-C to end the poll. (The functionality of this program
+is modeled on [iclickerpoll](https://github.com/siefkenj/iclickerpoll).)
+
+## Why?
 
 The basic premise of clickers is pretty simple. You show students a
 multiple choice quiz question, let them think about the question,
@@ -87,7 +92,7 @@ So, what I want is a portable, open source client program that gives
 me full access to the students' responses.  This is what FreePoll
 is intended to be.
 
-# Technical details
+## Technical details
 
 [Jason Siefken](https://www.math.toronto.edu/siefkenj/homepage/index.html)
 already did the hard part, which is reverse-engineering enough of the
@@ -107,15 +112,21 @@ which is probably the easiest kind of USB device to communicate with.
 FreePoll uses [libusb/hidapi](https://github.com/libusb/hidapi)
 to talk to the base station, using the same approach as iclickerpoll.
 
-# License
+## Limitations
+
+Only alphabetic (choices A–E) polls are supported.
+
+## License
 
 FreePoll is distributed under the terms of the GNU General Public License
 version 3.  See the [LICENSE](LICENSE) for details.
 
 FreePoll includes code derived from [iclickerpoll](https://github.com/siefkenj/iclickerpoll).
-It also uses [rapidcsv](https://github.com/d99kris/rapidcsv) to read CSV files.
+It also uses [rapidcsv](https://github.com/d99kris/rapidcsv) to read CSV files,
+and [argparse](https://github.com/stdbug/argparse) to parse command line
+arguments.
 
-# Contact
+## Contact
 
 If you're interested in helping out, or have feedback, you can contact me at
 <mailto:david.hovemeyer@gmail.com>.

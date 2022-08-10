@@ -91,7 +91,7 @@ void decode_response(const unsigned char *data, std::vector<RawResponse> &respon
   //   Invalid response packet (code=aa)
   //   Invalid response packet (code=86)
   if (data[2] < 0x81 || data[2] > 0x85) {
-    std::cout << "Invalid response packet (code=" << std::hex << unsigned(data[2]) << ")\n";
+    //std::cout << "Invalid response packet (code=" << std::hex << unsigned(data[2]) << ")\n";
     return;
   }
 
@@ -113,7 +113,7 @@ void decode_response(const unsigned char *data, std::vector<RawResponse> &respon
 
     // decode the selected option
     // A=0x81, B=0x82, etc.
-    std::cout << "option=" << std::hex << unsigned(data[2]) << "\n";
+    //std::cout << "option=" << std::hex << unsigned(data[2]) << "\n";
     Option option = Option(data[2] - 0x81);
 
     // get the sequence number

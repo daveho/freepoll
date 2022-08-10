@@ -16,51 +16,90 @@
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
 #include <string>
-#include <sstream>
 #include <memory>
-#include <chrono>
-#include <thread>
+#include <csignal>
+#include <cstdlib>
+#include <unistd.h> // for pause()
 #include "poll.h"
 #include "base.h"
 #include "poll_runner.h"
+#include "frequency.h"
+#include "exception.h"
+#include "argparse.h"
 
-int main() {
-  std::cout << "Initalizing base...\n";
+void handle_sigint(int) {
+  // do nothing
+}
+
+int main(int argc, char **argv) {
+  std::string progname = argv[0];
+
+  argparse::Parser parse_args;
+  auto help_opt = parse_args.AddFlag("help", 'h', "Show usage info");
+  auto dest_opt = parse_args.AddArg<std::string>("dest", "Set output CSV filename");
+  auto frequency_opt = parse_args.AddArg<std::string>("frequency", "Set the base station frequency (e.g., \"AA\", etc.)");
+
+  parse_args.ParseArgs(argc, argv);
+
+  if (*help_opt) {
+    std::cerr << parse_args.DefaultUsageString(progname);
+    return 0;
+  }
+
+  if (!dest_opt) {
+    std::cerr << "No destination file specified (use --dest option)\n\n";
+    std::cerr << parse_args.DefaultUsageString(progname);
+    return 1;
+  }
+  std::string dest_filename = *dest_opt;
+
+  Frequency freq("AA");
+  if (frequency_opt) {
+    freq = Frequency(*frequency_opt);
+  }
+
   std::unique_ptr<Base> base(new Base());
-  base->initialize();
+  try {
+    base->initialize();
+  } catch (PollException &ex) {
+    std::cerr << "Error: " << ex.what() << "\n";
+    return 1;
+  }
 
-  std::cout << "initialized base?\n";
-
-  std::cout << "Test program: enter \"start\" to start a poll,\n"
-            << "and enter \"stop\" to end the poll and quit\n"
-            << "the program\n";
+  signal(SIGINT, handle_sigint);
 
   Poll poll;
   PollRunner runner(base.get(), &poll);
 
-  bool done = false;
-  std::string line;
-  while (!done && std::getline(std::cin, line)) {
-    if (line == "start" && !runner.is_poll_started()) {
-      std::cout << "starting poll...\n";
-      runner.start_poll();
-    } else if (line == "stop") {
-      if (runner.is_poll_started()) {
-        runner.stop_poll();
-        std::cout << "poll finished\n";
-      }
-      done = true;
-    }
+  std::cout << "Starting poll (use control-C to end poll)...\n";
+  runner.start_poll();
+
+  // wait for control-C
+  // Note that this code will only work on POSIX systems:
+  // for Windows, it looks like an alternate mechanism is available
+  // (see https://stackoverflow.com/questions/18291284)
+  pause();
+
+  std::cout << "Stopping poll...\n";
+  runner.stop_poll();
+
+  std::ofstream out(dest_filename);
+  if (!out.is_open()) {
+    std::cerr << "Failed to output destination file " << dest_filename << "\n";
+    return 1;
   }
 
-  // print poll results
+  // save poll results
   std::map<RemoteID, Option> poll_results = poll.get_final_responses();
-  std::cout << "RemoteID,Option\n";
+  out << "RemoteID,Option\n";
   for (auto i = poll_results.begin(); i != poll_results.end(); ++i) {
-    std::cout << std::hex << std::setw(8) << i->first << "," << char('A' + int(i->second)) << "\n";
+    out << std::hex << std::setw(8) << i->first << "," << char('A' + int(i->second)) << "\n";
   }
+
+  std::cout << "Wrote results to " << dest_filename << "\n";
 
   return 0;
 }
