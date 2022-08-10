@@ -132,6 +132,5 @@ sudo apt install scrot
 sudo apt install imagemagick
 ```
 
-FreePoll doesn't have any notion of student identities. It only knows about
-iClicker remote IDs.  You'll need to have students tell you iClicker remote
-IDs.
+FreePoll doesn't have any notion of student identities, only iClicker remote IDs.
+So, you'll need to have students tell you their iClicker remote IDs.
