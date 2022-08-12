@@ -227,7 +227,7 @@ const char *greeting_text[] = {
   "     v " FREEPOLL_VERSION "     ",
 };
 
-const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 500;
+const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 250;
 
 } // end anonymous namespace
 
