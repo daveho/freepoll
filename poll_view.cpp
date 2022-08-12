@@ -125,6 +125,8 @@ PollView::~PollView() {
 
 void PollView::on_update(Observable *observable, int hint) {
   if (hint == PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED) {
+    // adjust size based on whether or not the
+    // bar graph is being displayed
     if (m_model->is_bar_graph_enabled()) {
       SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_EXPANDED_HEIGHT));
     } else {

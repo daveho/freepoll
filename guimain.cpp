@@ -61,9 +61,6 @@ public:
 
 private:
   void OnExit(wxCloseEvent& event);
-#if 0
-  void on_resize(wxSizeEvent &event);
-#endif
   wxDECLARE_EVENT_TABLE();
 };
 
@@ -140,6 +137,8 @@ FreePollFrame::~FreePollFrame() {
 
 void FreePollFrame::on_update(Observable *observable, int hint) {
   if (hint == PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED) {
+    // adjust client area size based on whether or not the
+    // bar graph is being displayed
     if (m_model->is_bar_graph_enabled()) {
       SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_EXPANDED_HEIGHT));
     } else {
@@ -161,10 +160,3 @@ void FreePollFrame::OnExit(wxCloseEvent& event)
 
   Destroy();
 }
-
-#if 0
-void FreePollFrame::on_resize(wxSizeEvent &event) {
-  wxSize sz = event.GetSize();
-  std::cout << "Resize, size is now " << sz.GetWidth() << "x" << sz.GetHeight() << "\n";
-}
-#endif
