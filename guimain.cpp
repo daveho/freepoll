@@ -27,7 +27,6 @@
 #include "datastore.h"
 #include "base.h"
 #include "exception.h"
-//#include "poll_view_viewport.h"
 #include "poll_view.h"
 #include "poll_model.h"
 #include "gui_common.h"
@@ -50,7 +49,6 @@ class FreePollFrame: public wxFrame, public Observer
 {
 private:
   PollModel *m_model;
-  //PollViewViewport *m_poll_view_viewport;
   PollView *m_poll_view;
 
 public:
@@ -66,9 +64,6 @@ private:
 
 wxBEGIN_EVENT_TABLE(FreePollFrame, wxFrame)
   EVT_CLOSE(FreePollFrame::OnExit)
-#if 0
-  EVT_SIZE(FreePollFrame::on_resize)
-#endif
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(FreePollApp);
