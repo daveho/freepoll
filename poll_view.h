@@ -37,6 +37,7 @@ private:
   TimerView *m_timer_view;
   PollResponseCountView *m_poll_response_count_view;
   PollFrequencyView *m_poll_frequency_view;
+  wxButton *m_bar_graph_btn;
   PollRunner *m_poll_runner;
 
 public:

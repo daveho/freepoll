@@ -22,6 +22,7 @@
 #include <wx/sizer.h>
 #include "play_button_icon.h"
 #include "stop_button_icon.h"
+#include "bar_graph_icon.h"
 #include "timer.h"
 #include "timer_view.h"
 #include "poll.h"
@@ -39,9 +40,11 @@ namespace {
 
 const int PLAY_STOP_BUTTON = 100;
 const int COURSE_LIST = 101;
+const int BAR_GRAPH_BUTTON = 102;
 
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
 wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
+wxBitmap BAR_GRAPH_BITMAP(bar_graph_icon);
 
 const int POLL_VIEW_WIDTH = 350;
 const int POLL_VIEW_HEIGHT = 100;
@@ -49,7 +52,6 @@ const int POLL_VIEW_HEIGHT = 100;
 const int COURSE_LIST_HEIGHT = 28;
 
 const int H_SEP_SMALL = 10;
-const int H_SEP_LARGE = 24;
 
 }
 
@@ -84,19 +86,24 @@ PollView::PollView(wxWindow *parent, PollModel *model)
 
   m_model->get_timer()->add_observer(m_timer_view);
 
-  items->AddSpacer(H_SEP_LARGE);
+  items->AddSpacer(H_SEP_SMALL);
 
   m_poll_response_count_view = new PollResponseCountView(this, m_model->get_poll());
   items->Add(m_poll_response_count_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->get_poll()->add_observer(m_poll_response_count_view);
 
-  items->AddSpacer(H_SEP_LARGE);
+  items->AddSpacer(H_SEP_SMALL);
   m_poll_frequency_view = new PollFrequencyView(this, m_model);
   items->Add(m_poll_frequency_view, 0, wxALL|wxALIGN_CENTRE);
 
   m_model->add_observer(m_poll_frequency_view);
   m_model->get_poll()->add_observer(m_poll_frequency_view);
+
+  items->AddSpacer(H_SEP_SMALL);
+  m_bar_graph_btn = new wxButton(this, BAR_GRAPH_BUTTON, "", wxDefaultPosition, wxSize(40, 40));
+  m_bar_graph_btn->SetBitmap(BAR_GRAPH_BITMAP);
+  items->Add(m_bar_graph_btn, 0, wxALL|wxALIGN_CENTRE);
 
   vlayout->Add(items);
 

@@ -24,10 +24,13 @@ namespace {
 
 const int POLL_UPDATED = 400;
 
+const int POLL_RESPONSE_COUNT_VIEW_WIDTH = 75;
+const int POLL_RESPONSE_COUNT_VIEW_HEIGHT = 44;
+
 }
 
 PollResponseCountView::PollResponseCountView(wxWindow *parent, Poll *poll)
-  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(80, 44))
+  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_RESPONSE_COUNT_VIEW_WIDTH, POLL_RESPONSE_COUNT_VIEW_HEIGHT))
   , m_poll(poll) {
   SetFont(GetFont().Scale(FONT_SCALING_FACTOR));
   m_label = new wxStaticText(this, wxID_ANY, "0");
