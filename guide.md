@@ -97,7 +97,7 @@ looks something like this:
 The choice box should have all of your courses. Select the one you want to
 put your poll data in.
 
-Click the "play" ("▶") button to start a poll. The timer will start counting up,
+Click the left "play" ("▶") button to start a poll. The timer will start counting up,
 and the indicator for the number of responses received so far will increment
 each time a student submits an initial response:
 
@@ -108,7 +108,7 @@ to display a bar graph of the current poll results:
 
 ![screenshot of a poll with bar graph of results](img/screenshot_bar_graph.png)
 
-Press the button again (it's now a "stop" button, "⏹") to end the poll.
+Press the left button again (it's now a "stop" button, "⏹") to end the poll.
 FreePoll will create a new subdirectory of the course directory for the selected
 course, with a directory name of the form
 
