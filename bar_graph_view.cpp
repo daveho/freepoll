@@ -76,7 +76,7 @@ void BarGraphView::draw_bar_graph(wxDC &dc) {
   // draw background rectangle
   dc.SetPen(*wxTRANSPARENT_PEN);
   dc.SetBrush(*wxWHITE_BRUSH);
-  dc.DrawRectangle(INSET, INSET, POLL_VIEW_WIDTH - INSET*2, BAR_GRAPH_HEIGHT - INSET*2);
+  dc.DrawRectangle(INSET, 0, POLL_VIEW_WIDTH - INSET*2, BAR_GRAPH_HEIGHT - INSET);
 
   // draw x axis line
   int x_axis_row = BAR_GRAPH_HEIGHT-INSET*2;
@@ -107,7 +107,7 @@ void BarGraphView::draw_bar_graph(wxDC &dc) {
   }
 
   // draw bars
-  int max_bar_height = BAR_GRAPH_HEIGHT-INSET*4;
+  int max_bar_height = BAR_GRAPH_HEIGHT-INSET*3;
   int bar_width = (POLL_VIEW_WIDTH - INSET*8) / 5;
   for (int i = 0; i < 5; i++) {
     dc.SetPen(gray_pen);
@@ -119,7 +119,7 @@ void BarGraphView::draw_bar_graph(wxDC &dc) {
 
     int left = INSET*2 + i*(INSET+bar_width);
     int top = x_axis_row - bar_height;
-    dc.DrawRectangle(left, top, bar_width, bar_height);
+    dc.DrawRectangle(left, top + 1, bar_width, bar_height);
   }
 }
 
