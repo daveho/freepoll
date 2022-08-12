@@ -34,6 +34,7 @@
 #include "exception.h"
 #include "base.h"
 #include "poll_frequency_view.h"
+#include "bar_graph_view.h"
 #include "gui_common.h"
 #include "poll_view.h"
 
@@ -97,6 +98,12 @@ PollView::PollView(wxWindow *parent, PollModel *model)
 
   vlayout->Add(items);
 
+  m_bar_graph_view = new BarGraphView(this, model);
+  vlayout->Add(m_bar_graph_view);
+
+  m_model->add_observer(m_bar_graph_view);
+  m_model->get_poll()->add_observer(m_bar_graph_view);
+
   SetSizer(vlayout);
 }
 
@@ -106,6 +113,9 @@ PollView::~PollView() {
 
   m_model->remove_observer(m_poll_frequency_view);
   m_model->get_poll()->remove_observer(m_poll_frequency_view);
+
+  m_model->remove_observer(m_bar_graph_view);
+  m_model->get_poll()->remove_observer(m_bar_graph_view);
 
   delete m_model;
 }

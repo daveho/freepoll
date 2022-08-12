@@ -15,25 +15,21 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef GUI_COMMON_H
-#define GUI_COMMON_H
+#ifndef BAR_GRAPH_VIEW_H
+#define BAR_GRAPH_VIEW_H
 
-#define LIGHT_TEXT_COLOR wxColor(128, 128, 128)
+#include <wx/panel.h>
+class PollModel;
 
-const double FONT_SCALING_FACTOR = 2.5;
+class BarGraphView : public wxPanel, public Observer {
+private:
+  PollModel *m_model;
 
-// window IDs
-const int PLAY_STOP_BUTTON = 100;
-const int COURSE_LIST = 101;
-const int BAR_GRAPH_BUTTON = 102;
+public:
+  BarGraphView(wxWindow *parent, PollModel *model);
+  virtual ~BarGraphView();
 
-// widget sizing
-const int POLL_VIEW_WIDTH = 350;
-const int POLL_VIEW_HEIGHT = 100;          // height w/ bar graph hidden
-const int POLL_VIEW_EXPANDED_HEIGHT = 350; // height w/ bar graph visible
+  virtual void on_update(Observable *observable, int hint);
+};
 
-const int COURSE_LIST_HEIGHT = 28;
-
-const int H_SEP_SMALL = 10;
-
-#endif // GUI_COMMON_H
+#endif

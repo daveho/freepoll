@@ -27,6 +27,7 @@ class PollModel;
 class TimerView;
 class PollResponseCountView;
 class PollFrequencyView;
+class BarGraphView;
 class PollRunner;
 
 class PollView : public wxPanel, public Observer {
@@ -38,6 +39,7 @@ private:
   PollResponseCountView *m_poll_response_count_view;
   PollFrequencyView *m_poll_frequency_view;
   wxButton *m_bar_graph_btn;
+  BarGraphView *m_bar_graph_view;
   PollRunner *m_poll_runner;
 
 public:
