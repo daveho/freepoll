@@ -27,9 +27,11 @@
 #include "datastore.h"
 #include "base.h"
 #include "exception.h"
-#include "poll_view_viewport.h"
+//#include "poll_view_viewport.h"
 #include "poll_view.h"
 #include "poll_model.h"
+#include "gui_common.h"
+#include "observer.h"
 
 class FreePollApp: public wxApp
 {
@@ -44,24 +46,28 @@ private:
   void show_error_dialog(const wxString &msg);
 };
 
-class FreePollFrame: public wxFrame
+class FreePollFrame: public wxFrame, public Observer
 {
 private:
   PollModel *m_model;
-  PollViewViewport *m_poll_view_viewport;
+  //PollViewViewport *m_poll_view_viewport;
   PollView *m_poll_view;
 
 public:
   FreePollFrame(const wxString& title, PollModel *model);
   virtual ~FreePollFrame();
 
+  virtual void on_update(Observable *observable, int hint);
+
 private:
   void OnExit(wxCloseEvent& event);
+  void on_resize(wxSizeEvent &event);
   wxDECLARE_EVENT_TABLE();
 };
 
 wxBEGIN_EVENT_TABLE(FreePollFrame, wxFrame)
   EVT_CLOSE(FreePollFrame::OnExit)
+  EVT_SIZE(FreePollFrame::on_resize)
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(FreePollApp);
@@ -112,19 +118,30 @@ void FreePollApp::show_error_dialog(const wxString &msg) {
 }
 
 FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
-  : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE|wxSTAY_ON_TOP)
+  : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, (wxDEFAULT_FRAME_STYLE|wxSTAY_ON_TOP) & ~wxRESIZE_BORDER)
 {
   m_model = model;
-  m_poll_view_viewport = new PollViewViewport(this, model);
-  m_poll_view = new PollView(m_poll_view_viewport, model);
+  m_model->add_observer(this); // for bar graph enablement changes
 
-  m_model->add_observer(m_poll_view_viewport);
+  m_poll_view = new PollView(this, model);
+  m_model->add_observer(m_poll_view);
 
-  Fit();
+  SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT));
 }
 
 FreePollFrame::~FreePollFrame() {
-  m_model->remove_observer(m_poll_view_viewport);
+  m_model->remove_observer(this);
+  m_model->remove_observer(m_poll_view);
+}
+
+void FreePollFrame::on_update(Observable *observable, int hint) {
+  if (hint == PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED) {
+    if (m_model->is_bar_graph_enabled()) {
+      SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_EXPANDED_HEIGHT));
+    } else {
+      SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT));
+    }
+  }
 }
 
 void FreePollFrame::OnExit(wxCloseEvent& event)
@@ -139,4 +156,9 @@ void FreePollFrame::OnExit(wxCloseEvent& event)
   }
 
   Destroy();
+}
+
+void FreePollFrame::on_resize(wxSizeEvent &event) {
+  wxSize sz = event.GetSize();
+  std::cout << "Resize, size is now w=" << sz.GetWidth() << "x" << sz.GetHeight() << "\n";
 }

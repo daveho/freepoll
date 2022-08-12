@@ -50,6 +50,7 @@ PollView::PollView(wxWindow *parent, PollModel *model)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT))
   , m_model(model)
   , m_poll_runner(nullptr) {
+
   wxBoxSizer *vlayout = new wxBoxSizer(wxVERTICAL);
 
   m_course_list = new wxChoice(this, COURSE_LIST, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, COURSE_LIST_HEIGHT));
@@ -121,7 +122,13 @@ PollView::~PollView() {
 }
 
 void PollView::on_update(Observable *observable, int hint) {
-  // TODO
+  if (hint == PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED) {
+    if (m_model->is_bar_graph_enabled()) {
+      SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_EXPANDED_HEIGHT));
+    } else {
+      SetSize(wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT));
+    }
+  }
 }
 
 void PollView::on_play_stop_button(wxCommandEvent &evt) {
@@ -194,7 +201,12 @@ void PollView::on_selected_course_change(wxCommandEvent &evt) {
   m_model->set_current_course(unsigned(m_course_list->GetSelection()));
 }
 
+void PollView::on_bar_graph_button(wxCommandEvent &evt) {
+  m_model->set_bar_graph_enabled(!m_model->is_bar_graph_enabled());
+}
+
 wxBEGIN_EVENT_TABLE(PollView, wxPanel)
   EVT_BUTTON(PLAY_STOP_BUTTON, PollView::on_play_stop_button)
   EVT_CHOICE(COURSE_LIST, PollView::on_selected_course_change)
+  EVT_BUTTON(BAR_GRAPH_BUTTON, PollView::on_bar_graph_button)
 wxEND_EVENT_TABLE()

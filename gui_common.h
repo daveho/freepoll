@@ -27,13 +27,17 @@ const int PLAY_STOP_BUTTON = 100;
 const int COURSE_LIST = 101;
 const int BAR_GRAPH_BUTTON = 102;
 
+// command event IDs
+const int CMD_TIMER_UPDATED = 200;
+const int CMD_BAR_GRAPH_ENABLEMENT_CHANGED = 201;
+
 // widget sizing
 const int POLL_VIEW_WIDTH = 350;
 const int POLL_VIEW_HEIGHT = 100;          // height w/ bar graph hidden
 const int POLL_VIEW_EXPANDED_HEIGHT = 350; // height w/ bar graph visible
-
 const int COURSE_LIST_HEIGHT = 28;
-
 const int H_SEP_SMALL = 10;
+const int TIMER_VIEW_WIDTH = 80;
+const int TIMER_VIEW_HEIGHT = 44;
 
 #endif // GUI_COMMON_H

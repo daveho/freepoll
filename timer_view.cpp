@@ -23,12 +23,6 @@
 #include "timer_view.h"
 
 namespace {
-
-const int TIMER_UPDATED = 200;
-
-const int TIMER_VIEW_WIDTH = 80;
-const int TIMER_VIEW_HEIGHT = 44;
-
 }
 
 // Caller is responsible for registering the TimerView as an
@@ -51,7 +45,7 @@ void TimerView::on_update(Observable *observable, int hint) {
   // this is called from the timer thread, so post an event
   // which will ensure that the GUI update happens in the main
   // thread
-  wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, TIMER_UPDATED);
+  wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, CMD_TIMER_UPDATED);
   GetEventHandler()->AddPendingEvent(event);
 }
 
@@ -76,5 +70,5 @@ void TimerView::on_timer_update(wxCommandEvent &evt) {
 }
 
 wxBEGIN_EVENT_TABLE(TimerView, wxPanel)
-  EVT_COMMAND(TIMER_UPDATED, wxEVT_COMMAND_TEXT_UPDATED, TimerView::on_timer_update)
+  EVT_COMMAND(CMD_TIMER_UPDATED, wxEVT_COMMAND_TEXT_UPDATED, TimerView::on_timer_update)
 wxEND_EVENT_TABLE()

@@ -49,8 +49,11 @@ public:
   virtual void on_update(Observable *observable, int hint);
 
 private:
+  void resize(const wxSize &size);
+
   void on_play_stop_button(wxCommandEvent &evt);
   void on_selected_course_change(wxCommandEvent &evt);
+  void on_bar_graph_button(wxCommandEvent &evt);
 
   wxDECLARE_EVENT_TABLE();
 };

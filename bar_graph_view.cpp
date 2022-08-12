@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
+#include <iostream>
 #include "poll_model.h"
 #include "poll.h"
 #include "gui_common.h"
