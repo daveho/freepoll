@@ -61,13 +61,17 @@ public:
 
 private:
   void OnExit(wxCloseEvent& event);
+#if 0
   void on_resize(wxSizeEvent &event);
+#endif
   wxDECLARE_EVENT_TABLE();
 };
 
 wxBEGIN_EVENT_TABLE(FreePollFrame, wxFrame)
   EVT_CLOSE(FreePollFrame::OnExit)
+#if 0
   EVT_SIZE(FreePollFrame::on_resize)
+#endif
 wxEND_EVENT_TABLE()
 
 wxIMPLEMENT_APP(FreePollApp);
@@ -158,7 +162,9 @@ void FreePollFrame::OnExit(wxCloseEvent& event)
   Destroy();
 }
 
+#if 0
 void FreePollFrame::on_resize(wxSizeEvent &event) {
   wxSize sz = event.GetSize();
   std::cout << "Resize, size is now " << sz.GetWidth() << "x" << sz.GetHeight() << "\n";
 }
+#endif

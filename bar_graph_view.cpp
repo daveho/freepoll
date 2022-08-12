@@ -40,6 +40,12 @@ const wxColour BAR_COLORS[] = {
   wxColour(255, 0, 0),
 };
 
+const int OPTION_LABEL_HEIGHT = 24;
+
+// FIXME: hard-coded adjustments
+const int LABEL_XOFF = 24;
+const int LABEL_YOFF = 8;
+
 }
 
 BarGraphView::BarGraphView(wxWindow *parent, PollModel *model)
@@ -65,7 +71,7 @@ void BarGraphView::on_poll_data_updated(wxCommandEvent &evt) {
 }
 
 void BarGraphView::on_paint(wxPaintEvent &evt) {
-  std::cout << "paint bar graph!\n";
+  //std::cout << "paint bar graph!\n";
   wxPaintDC dc(this);
   draw_bar_graph(dc);
 }
@@ -73,15 +79,31 @@ void BarGraphView::on_paint(wxPaintEvent &evt) {
 void BarGraphView::draw_bar_graph(wxDC &dc) {
   wxPen gray_pen(LIGHT_TEXT_COLOR);
 
+  wxFont label_font = dc.GetFont();
+  label_font.Scale(2.0);
+  dc.SetFont(label_font);
+
+  int max_bar_height = BAR_GRAPH_HEIGHT - INSET*3 - OPTION_LABEL_HEIGHT;
+  int bar_width = (POLL_VIEW_WIDTH - INSET*8) / 5;
+
   // draw background rectangle
   dc.SetPen(*wxTRANSPARENT_PEN);
   dc.SetBrush(*wxWHITE_BRUSH);
   dc.DrawRectangle(INSET, 0, POLL_VIEW_WIDTH - INSET*2, BAR_GRAPH_HEIGHT - INSET);
 
   // draw x axis line
-  int x_axis_row = BAR_GRAPH_HEIGHT-INSET*2;
+  int x_axis_row = BAR_GRAPH_HEIGHT - INSET*2 - OPTION_LABEL_HEIGHT;
   dc.SetPen(gray_pen);
   dc.DrawLine(INSET*2, x_axis_row, POLL_VIEW_WIDTH-INSET*2, x_axis_row); 
+
+  // draw x axis labels
+  for (int i = 0; i < 5; i++) {
+    wxString label;
+    label += "ABCDE"[i];
+    dc.SetPen(*wxBLACK_PEN);
+    int left = INSET*2 + i*(INSET+bar_width) + LABEL_XOFF;
+    dc.DrawText(label, wxPoint(left, BAR_GRAPH_HEIGHT - INSET - OPTION_LABEL_HEIGHT - LABEL_YOFF));
+  }
 
   std::map<RemoteID, Option> current_responses = m_model->get_poll()->get_final_responses();
 
@@ -107,15 +129,13 @@ void BarGraphView::draw_bar_graph(wxDC &dc) {
   }
 
   // draw bars
-  int max_bar_height = BAR_GRAPH_HEIGHT-INSET*3;
-  int bar_width = (POLL_VIEW_WIDTH - INSET*8) / 5;
   for (int i = 0; i < 5; i++) {
     dc.SetPen(gray_pen);
     wxBrush fill(BAR_COLORS[i]);
     dc.SetBrush(fill);
 
     int bar_height = (frac[i] / max_frac) * max_bar_height;
-    std::cout << "bar " << i << " height=" << bar_height << "\n";
+    //std::cout << "bar " << i << " height=" << bar_height << "\n";
 
     int left = INSET*2 + i*(INSET+bar_width);
     int top = x_axis_row - bar_height;
