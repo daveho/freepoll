@@ -34,6 +34,7 @@ public:
 private:
   void on_poll_data_updated(wxCommandEvent &evt);
   void on_paint(wxPaintEvent &evt);
+  void draw_bar_graph(wxDC &dc);
 
   wxDECLARE_EVENT_TABLE();
 };
