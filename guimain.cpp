@@ -160,5 +160,5 @@ void FreePollFrame::OnExit(wxCloseEvent& event)
 
 void FreePollFrame::on_resize(wxSizeEvent &event) {
   wxSize sz = event.GetSize();
-  std::cout << "Resize, size is now w=" << sz.GetWidth() << "x" << sz.GetHeight() << "\n";
+  std::cout << "Resize, size is now " << sz.GetWidth() << "x" << sz.GetHeight() << "\n";
 }

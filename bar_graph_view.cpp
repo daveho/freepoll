@@ -24,11 +24,30 @@
 BarGraphView::BarGraphView(wxWindow *parent, PollModel *model)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, POLL_VIEW_EXPANDED_HEIGHT - POLL_VIEW_HEIGHT))
   , m_model(model) {
+  SetBackgroundColour(*wxBLUE);
 }
 
 BarGraphView::~BarGraphView() {
 }
 
 void BarGraphView::on_update(Observable *observable, int hint) {
-  // TODO: redraw the bar graph if the Poll data changed
+  if (hint == Poll::POLL_STARTED || hint == Poll::POLL_STARTED || hint == Poll::POLL_RESPONSE_RECORDED) {
+    // poll data changed, most likely in a thread other than the
+    // GUI event loop thread, so schedule an update
+    wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, CMD_POLL_DATA_UPDATED);
+    GetEventHandler()->AddPendingEvent(event);
+  }
 }
+
+void BarGraphView::on_poll_data_updated(wxCommandEvent &evt) {
+  Refresh();
+}
+
+void BarGraphView::on_paint(wxPaintEvent &evt) {
+  std::cout << "paint bar graph!\n";
+}
+
+wxBEGIN_EVENT_TABLE(BarGraphView, wxPanel)
+  EVT_COMMAND(CMD_POLL_DATA_UPDATED, wxEVT_COMMAND_TEXT_UPDATED, BarGraphView::on_poll_data_updated)
+  EVT_PAINT(BarGraphView::on_paint)
+wxEND_EVENT_TABLE()

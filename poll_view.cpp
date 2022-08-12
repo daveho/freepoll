@@ -99,6 +99,8 @@ PollView::PollView(wxWindow *parent, PollModel *model)
 
   vlayout->Add(items);
 
+  vlayout->AddSpacer(4);
+
   m_bar_graph_view = new BarGraphView(this, model);
   vlayout->Add(m_bar_graph_view);
 

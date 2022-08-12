@@ -30,6 +30,7 @@ const int BAR_GRAPH_BUTTON = 102;
 // command event IDs
 const int CMD_TIMER_UPDATED = 200;
 const int CMD_BAR_GRAPH_ENABLEMENT_CHANGED = 201;
+const int CMD_POLL_DATA_UPDATED = 202;
 
 // widget sizing
 const int POLL_VIEW_WIDTH = 350;

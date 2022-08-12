@@ -30,6 +30,12 @@ public:
   virtual ~BarGraphView();
 
   virtual void on_update(Observable *observable, int hint);
+
+private:
+  void on_poll_data_updated(wxCommandEvent &evt);
+  void on_paint(wxPaintEvent &evt);
+
+  wxDECLARE_EVENT_TABLE();
 };
 
 #endif
