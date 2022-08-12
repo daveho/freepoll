@@ -35,7 +35,7 @@ const int INSET = 8;
 const wxColour BAR_COLORS[] = {
   wxColour(0, 0, 255),
   wxColour(0xff, 0xa5 ,0x00),
-  wxColour(0x73, 0x82, 0x76),
+  wxColour(0, 128, 0),
   wxColour(0xa0, 0x20, 0xf0),
   wxColour(255, 0, 0),
 };

@@ -5,7 +5,7 @@ static const char *bar_graph_icon[] = {
 "* c black",
 "  c None",
 "r c red",
-"g c #738276",
+"g c #008000",
 "b c blue",
 "o c orange",
 "p c purple",
