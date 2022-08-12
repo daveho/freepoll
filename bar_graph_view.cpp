@@ -42,16 +42,11 @@ const wxColour BAR_COLORS[] = {
 
 const int OPTION_LABEL_HEIGHT = 24;
 
-// FIXME: hard-coded adjustments
-const int LABEL_XOFF = 24;
-const int LABEL_YOFF = 8;
-
 }
 
 BarGraphView::BarGraphView(wxWindow *parent, PollModel *model)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, BAR_GRAPH_HEIGHT))
   , m_model(model) {
-  //SetBackgroundColour(*wxBLUE);
 }
 
 BarGraphView::~BarGraphView() {
@@ -100,13 +95,20 @@ void BarGraphView::draw_bar_graph(wxDC &dc) {
   for (int i = 0; i < 5; i++) {
     wxString label;
     label += "ABCDE"[i];
+
+    wxCoord label_w, label_h;
+    dc.GetTextExtent(label, &label_w, &label_h);
+
     dc.SetPen(*wxBLACK_PEN);
-    int left = INSET*2 + i*(INSET+bar_width) + LABEL_XOFF;
-    dc.DrawText(label, wxPoint(left, BAR_GRAPH_HEIGHT - INSET - OPTION_LABEL_HEIGHT - LABEL_YOFF));
+    int left = INSET*2 + i*(INSET+bar_width) + (bar_width - label_w)/2;
+    int top = BAR_GRAPH_HEIGHT - INSET*2 - OPTION_LABEL_HEIGHT + (OPTION_LABEL_HEIGHT-label_h)/2;
+    dc.DrawText(label, wxPoint(left, top));
   }
 
+  // get current responses
   std::map<RemoteID, Option> current_responses = m_model->get_poll()->get_final_responses();
 
+  // if there are no responses, don't draw any bars
   if (current_responses.empty()) {
     return;
   }
