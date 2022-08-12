@@ -34,24 +34,14 @@
 #include "exception.h"
 #include "base.h"
 #include "poll_frequency_view.h"
+#include "gui_common.h"
 #include "poll_view.h"
 
 namespace {
 
-const int PLAY_STOP_BUTTON = 100;
-const int COURSE_LIST = 101;
-const int BAR_GRAPH_BUTTON = 102;
-
 wxBitmap PLAY_BUTTON_BITMAP(play_button_icon);
 wxBitmap STOP_BUTTON_BITMAP(stop_button_icon);
 wxBitmap BAR_GRAPH_BITMAP(bar_graph_icon);
-
-const int POLL_VIEW_WIDTH = 350;
-const int POLL_VIEW_HEIGHT = 100;
-
-const int COURSE_LIST_HEIGHT = 28;
-
-const int H_SEP_SMALL = 10;
 
 }
 

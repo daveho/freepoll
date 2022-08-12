@@ -27,7 +27,8 @@ PollModel::PollModel(DataStore *datastore)
   , m_base(new Base())
   , m_poll(new Poll())
   , m_timer(new Timer())
-  , m_selected_course(0) {
+  , m_selected_course(0)
+  , m_bar_graph_enabled(false) {
   m_poll->add_observer(this);
   m_timer->add_observer(this);
 }
@@ -66,6 +67,15 @@ void PollModel::set_poll_data_dir(const std::string &poll_data_dir) {
 
 std::string PollModel::get_poll_data_dir() const {
   return m_poll_data_dir;
+}
+
+void PollModel::set_bar_graph_enabled(bool en) {
+  m_bar_graph_enabled = en;
+  notify_observers(POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED);
+}
+
+bool PollModel::is_bar_graph_enabled() const {
+  return m_bar_graph_enabled;
 }
 
 DataStore *PollModel::get_datastore() const {

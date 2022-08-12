@@ -15,24 +15,18 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef GUI_COMMON_H
-#define GUI_COMMON_H
+#include "gui_common.h"
+#include "poll_view_viewport.h"
 
-#define LIGHT_TEXT_COLOR wxColor(128, 128, 128)
+PollViewViewport::PollViewViewport(wxWindow *parent, PollModel *model)
+  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(POLL_VIEW_WIDTH, POLL_VIEW_HEIGHT))
+  , m_model(model) {
 
-const double FONT_SCALING_FACTOR = 2.5;
+}
 
-// window IDs
-const int PLAY_STOP_BUTTON = 100;
-const int COURSE_LIST = 101;
-const int BAR_GRAPH_BUTTON = 102;
+PollViewViewport::~PollViewViewport() {
+}
 
-// widget sizing
-const int POLL_VIEW_WIDTH = 350;
-const int POLL_VIEW_HEIGHT = 100;
-
-const int COURSE_LIST_HEIGHT = 28;
-
-const int H_SEP_SMALL = 10;
-
-#endif // GUI_COMMON_H
+void PollViewViewport::on_update(Observable *observable, int hint) {
+  // TODO: update size and notify parent frame
+}

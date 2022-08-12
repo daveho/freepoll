@@ -43,6 +43,7 @@ private:
   Timer *m_timer;
   unsigned m_selected_course;
   std::string m_poll_data_dir;
+  bool m_bar_graph_enabled;
 
 public:
   // note that each observable object has a distinct range of hint
@@ -52,6 +53,7 @@ public:
   // these are the hints that are specific to PollModel
   enum {
     POLL_MODEL_SELECTED_COURSE_CHANGED = 3000,
+    POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED = 3001,
   };
 
   PollModel(DataStore *datastore);
@@ -67,6 +69,9 @@ public:
 
   void set_poll_data_dir(const std::string &poll_data_dir);
   std::string get_poll_data_dir() const;
+
+  void set_bar_graph_enabled(bool en);
+  bool is_bar_graph_enabled() const;
 
   DataStore *get_datastore() const;
   Base *get_base() const;

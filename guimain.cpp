@@ -27,6 +27,7 @@
 #include "datastore.h"
 #include "base.h"
 #include "exception.h"
+#include "poll_view_viewport.h"
 #include "poll_view.h"
 #include "poll_model.h"
 
@@ -47,10 +48,12 @@ class FreePollFrame: public wxFrame
 {
 private:
   PollModel *m_model;
+  PollViewViewport *m_poll_view_viewport;
   PollView *m_poll_view;
 
 public:
   FreePollFrame(const wxString& title, PollModel *model);
+  virtual ~FreePollFrame();
 
 private:
   void OnExit(wxCloseEvent& event);
@@ -112,8 +115,16 @@ FreePollFrame::FreePollFrame(const wxString& title, PollModel *model)
   : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE|wxSTAY_ON_TOP)
 {
   m_model = model;
-  m_poll_view = new PollView(this, model);
+  m_poll_view_viewport = new PollViewViewport(this, model);
+  m_poll_view = new PollView(m_poll_view_viewport, model);
+
+  m_model->add_observer(m_poll_view_viewport);
+
   Fit();
+}
+
+FreePollFrame::~FreePollFrame() {
+  m_model->remove_observer(m_poll_view_viewport);
 }
 
 void FreePollFrame::OnExit(wxCloseEvent& event)

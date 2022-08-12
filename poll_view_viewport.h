@@ -15,24 +15,27 @@
 // You should have received a copy of the GNU General Public License along
 // with FreePoll. If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef GUI_COMMON_H
-#define GUI_COMMON_H
+#ifndef POLL_VIEW_VIEWPORT_H
+#define POLL_VIEW_VIEWPORT_H
 
-#define LIGHT_TEXT_COLOR wxColor(128, 128, 128)
+#include <wx/panel.h>
+#include "observer.h"
+class PollModel;
 
-const double FONT_SCALING_FACTOR = 2.5;
+// The PollViewViewport is a panel that adjusts its size to
+// accommodate the bar graph view if it is being displayed.
+// It observes the PollModel and adjusts its size depending on whether
+// or not the bar graph display is enabled.
 
-// window IDs
-const int PLAY_STOP_BUTTON = 100;
-const int COURSE_LIST = 101;
-const int BAR_GRAPH_BUTTON = 102;
+class PollViewViewport : public wxPanel, public Observer {
+private:
+  PollModel *m_model;
 
-// widget sizing
-const int POLL_VIEW_WIDTH = 350;
-const int POLL_VIEW_HEIGHT = 100;
+public:
+  PollViewViewport(wxWindow *parent, PollModel *model);
+  virtual ~PollViewViewport();
 
-const int COURSE_LIST_HEIGHT = 28;
+  virtual void on_update(Observable *observable, int hint);
+};
 
-const int H_SEP_SMALL = 10;
-
-#endif // GUI_COMMON_H
+#endif // POLL_VIEW_VIEWPORT_H

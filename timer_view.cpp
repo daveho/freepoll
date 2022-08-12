@@ -26,13 +26,16 @@ namespace {
 
 const int TIMER_UPDATED = 200;
 
+const int TIMER_VIEW_WIDTH = 80;
+const int TIMER_VIEW_HEIGHT = 44;
+
 }
 
 // Caller is responsible for registering the TimerView as an
 // observer of the Timer
 
 TimerView::TimerView(wxWindow *parent, Timer *timer)
-  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(100, 44))
+  : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(TIMER_VIEW_WIDTH, TIMER_VIEW_HEIGHT))
   , m_timer(timer) {
   SetFont(GetFont().Scale(FONT_SCALING_FACTOR));
   m_label = new wxStaticText(this, wxID_ANY, "0:00");
