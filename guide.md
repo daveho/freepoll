@@ -103,6 +103,11 @@ each time a student submits an initial response:
 
 ![screenshot of a poll in progress](img/screenshot.png)
 
+At any time, you can press the bar graph button (on the right of the window)
+to display a bar graph of the current poll results:
+
+![screenshot of a poll with bar graph of results](img/screenshot_bar_graph.png)
+
 Press the button again (it's now a "stop" button, "⏹") to end the poll.
 FreePoll will create a new subdirectory of the course directory for the selected
 course, with a directory name of the form
