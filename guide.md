@@ -8,9 +8,16 @@ in the future.
 
 ## Disclaimer
 
+<!--
 As of the time of writing (August 7th, 2022), FreePoll hasn't yet been
 used in anger. I'm planning to use it in my classes in the Fall 2022 semester.
 I'm feeling reasonably confident that it will work acceptably.
+-->
+
+As of August 29th, 2022, I am using FreePoll in two courses.
+In the first two class meetings, FreePoll worked well (with two polls in
+each class.) However, it's still early days, and it's possible there
+are serious bugs I'm not yet aware of.
 
 ## udev rules
 
