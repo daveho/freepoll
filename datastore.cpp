@@ -81,7 +81,7 @@ std::string DataStore::create_poll_data_dir(Course *course) {
   localtime_r(&tt, &local_tm);
 
   int y = local_tm.tm_year + 1900;
-  int m = local_tm.tm_mon;
+  int m = local_tm.tm_mon + 1; // tm_mon is months since January
   int d = local_tm.tm_mday;
 
   // Search the course directory for all directories sharing the
