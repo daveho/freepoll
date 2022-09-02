@@ -32,6 +32,6 @@ enum class Option {
 typedef uint64_t Timestamp;
 
 // Version string
-#define FREEPOLL_VERSION "0.02"
+#define FREEPOLL_VERSION "0.03"
 
 #endif // DATATYPES_H

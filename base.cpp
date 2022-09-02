@@ -227,7 +227,7 @@ const char *greeting_text[] = {
   "     v " FREEPOLL_VERSION "     ",
 };
 
-const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 250;
+const unsigned SCREEN_UPDATE_INTERVAL_MILLIS = 400;
 
 } // end anonymous namespace
 
@@ -358,7 +358,7 @@ void Base::collect_responses(volatile const bool &stop, ResponseCallback *respon
   }
 
   // do one last screen update
-  sleep(200);
+  sleep(SCREEN_UPDATE_INTERVAL_MILLIS);
   std::string percentages = analyze_responses(current_responses);
   set_screen(percentages, 1);
 }
