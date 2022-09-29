@@ -6,18 +6,25 @@ Note that this document assumes you are using Linux, which is the only
 system FreePoll has been compiled on so far. It might support other OSes
 in the future.
 
-## Disclaimer
+## Status of the software
 
 <!--
 As of the time of writing (August 7th, 2022), FreePoll hasn't yet been
 used in anger. I'm planning to use it in my classes in the Fall 2022 semester.
 I'm feeling reasonably confident that it will work acceptably.
--->
 
 As of August 29th, 2022, I am using FreePoll in two courses.
 In the first two class meetings, FreePoll worked well (with two polls in
 each class.) However, it's still early days, and it's possible there
 are serious bugs I'm not yet aware of.
+-->
+
+As of September 29th, 2022 I have been using FreePoll in two courses
+with up to 65 students participating in each poll, and I have not
+run into any issues.  I have verified that student responses are recorded
+for all students.  Therefore, I would consider FreePoll to be production
+quality at this point.  Of course, as with all software, there
+could be bugs. If you find any, [let me know](mailto:david.hovemeyer@gmail.com).
 
 ## udev rules
 
