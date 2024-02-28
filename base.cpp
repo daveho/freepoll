@@ -403,9 +403,11 @@ void Base::raw_send(const Message &msg) {
 
   // TODO: should think about how to make this nonblocking?
   int n = hid_write(m_dev, msg_to_send.data(), msg_to_send.size());
+  int expect_n = int(msg_to_send.size());
 
-  if (n != int(msg_to_send.size())) {
-    throw PollException("failed to write all data");
+  if (n != expect_n) {
+    throw PollException("failed to write all data (n=" + std::to_string(n) +
+                        ", expected to write=" + std::to_string(expect_n) + ")");
   }
 }
 
