@@ -22,7 +22,9 @@
 #include <memory>
 #include <csignal>
 #include <cstdlib>
-#include <unistd.h> // for pause()
+#if defined(FREEPOLL_IS_POSIX)
+#  include <unistd.h> // for pause()
+#endif
 #include "poll.h"
 #include "base.h"
 #include "poll_runner.h"
@@ -74,14 +76,20 @@ int main(int argc, char **argv) {
   Poll poll;
   PollRunner runner(base.get(), &poll);
 
+#if defined(FREEPOLL_IS_POSIX)
   std::cout << "Starting poll (use control-C to end poll)...\n";
   runner.start_poll();
 
   // wait for control-C
-  // Note that this code will only work on POSIX systems:
-  // for Windows, it looks like an alternate mechanism is available
-  // (see https://stackoverflow.com/questions/18291284)
   pause();
+#else
+  std::cout << "Starting poll (use ENTER to end poll)...\n";
+  runner.start_poll();
+
+  // wait for ENTER
+  std::string line;
+  std::getline(std::cin, line);
+#endif
 
   std::cout << "Stopping poll...\n";
   runner.stop_poll();
