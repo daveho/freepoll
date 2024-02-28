@@ -392,7 +392,7 @@ void Base::raw_send(const Message &msg) {
   Message msg_to_send;
   size_t num_extra_bytes = 1;
 
-#if defined(FREEPOLL_IS_WINDOWS)
+#if 0
   // It is seemingly necessary to prepend an EXTRA 0x0 byte on Windows
   // due to a bug in hidapi.
   msg_to_send += UC(0);
