@@ -389,23 +389,37 @@ void Base::synchronous_send(const Message &msg, unsigned timeout_millis) {
 void Base::raw_send(const Message &msg) {
   assert(m_dev != nullptr);
 
+  Message msg_to_send;
+  size_t num_extra_bytes = 1;
+
+#if defined(FREEPOLL_IS_WINDOWS)
+  // It is seemingly necessary to prepend an EXTRA 0x0 byte on Windows
+  // due to a bug in hidapi.
+  msg_to_send += UC(0);
+  ++num_extra_bytes;
+#endif
+
   // From the hid_write documentation:
   //
   //  "The first byte of @p data[] must contain the Report ID. For
   //  devices which only support a single report, this must be set
   //  to 0x0."
-
-  Message msg_to_send;
   msg_to_send += UC(0);
+
+  // Actual message data
   msg_to_send += msg;
 
-  assert(msg_to_send.size() == msg.size() + 1);
+  assert(msg_to_send.size() == msg.size() + num_extra_bytes);
 
   // TODO: should think about how to make this nonblocking?
   int n = hid_write(m_dev, msg_to_send.data(), msg_to_send.size());
   int expect_n = int(msg_to_send.size());
 
-  if (n != expect_n) {
+  // Note that on Windows, hid_write doesn't actually
+  // return the number of bytes written, it returns a
+  // greater value. So we'll consider the send to have succeeded
+  // if hid_write returns a value at least as great as n.
+  if (n < expect_n) {
     throw PollException("failed to write all data (n=" + std::to_string(n) +
                         ", expected to write=" + std::to_string(expect_n) + ")");
   }
