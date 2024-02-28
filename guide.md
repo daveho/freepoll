@@ -4,7 +4,8 @@ This document explains how to use FreePoll.
 
 Note that this document assumes you are using Linux, which is the only
 system FreePoll has been compiled on so far. It might support other OSes
-in the future.
+in the future. (As of February 2024, some preliminary efforts have
+been made to get it to work on Windows, but it's not functional yet.)
 
 ## Status of the software
 
@@ -45,6 +46,13 @@ Start by creating a directory called `FreePoll` in your home directory:
 ```bash
 mkdir ~/FreePoll
 ```
+
+(Note that on Windows your "home" directory is `C:/Users/username/AppData/Roaming`,
+where `username` is your Windows username. In the instructions below, be aware
+that "`~`" to refer to the home directory will need to be translated to
+this Windows-specific home directory if you are using Windows. For example,
+the full path to the "`FreePoll`" directory will be something like
+`C:/Users/username/AppData/Roaming/FreePoll`.)
 
 Create one subdirectory for each course you want FreePoll to be aware of.
 It doesn't matter what these subdirectories are called. E.g.:

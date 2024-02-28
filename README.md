@@ -24,6 +24,11 @@ background.
 
 ## Compilation
 
+### Compilation on Linux
+
+FreePoll currently only works fully on Linux, and has only been tested
+on Ubuntu 22.04.
+
 On Linux, you will need
 
 * g++
@@ -55,6 +60,34 @@ The `freepoll` executable is a very simple command line utility that
 runs a poll and writes the results to a CSV file. You wil need
 to use control-C to end the poll. (The functionality of this program
 is modeled on [iclickerpoll](https://github.com/siefkenj/iclickerpoll).)
+
+### Compilation on Windows (experimental!)
+
+A very preliminary effort to get FreePoll working on Windows has been started.
+Note that FreePoll doesn't actually work on Windows yet. (Help making
+this happen would be appreciated!)
+
+You need MSYS2: <https://www.msys2.org/>
+
+Install the compiler tools:
+
+```
+pacman -S --needed base-devel mingw-w64-x86_64-toolchain
+```
+
+Install wxWidgets and the hidapi libraries:
+
+```
+pacman -S mingw-w64-x86_64-wxWidgets
+pacman -S mingw-w64-x86_64-hidapi
+```
+
+Compile the code:
+
+```
+make depend
+make -j
+```
 
 ## Why?
 
