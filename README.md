@@ -12,8 +12,11 @@ use to run clicker quizzes from a Linux system.
 If you're interested in trying out FreePoll, first [compile it](#compilation),
 then you can refer to the [Guide](guide.md) for details on how to use it.
 
-FreePoll should be considered as alpha-quality software, and it's likely there
-are bugs. [Let me know](#contact) if you run into any.
+On Linux, FreePoll is reasonably robust and stable. Please do
+[let me know](#contact) if you run into any bugs, though.
+
+A small amount of progress towards allowing FreePoll to work on Windows
+has been made, but it's not functional yet.
 
 ## Who might find FreePoll useful?
 
