@@ -78,7 +78,13 @@ std::string DataStore::create_poll_data_dir(Course *course) {
   std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
   time_t tt = std::chrono::system_clock::to_time_t(now);
   tm local_tm;
+#if defined(FREEPOLL_IS_POSIX)
   localtime_r(&tt, &local_tm);
+#elif defined(FREEPOLL_IS_WINDOWS)
+  localtime_s(&local_tm, &tt);
+#else
+#  error "TODO: convert time_t to struct tm on non-POSIX non-Windows system"
+#endif
 
   int y = local_tm.tm_year + 1900;
   int m = local_tm.tm_mon + 1; // tm_mon is months since January
