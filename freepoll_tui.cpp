@@ -5,23 +5,19 @@ public:
   MainWindow( finalcut::FWidget *parent = nullptr );
   ~MainWindow();
 
-  void draw();
-  void onClose( finalcut::FCloseEvent *evt );
-  void onShow( finalcut::FShowEvent *evt );
-  void onKeyPress( finalcut::FKeyEvent *evt );
+  void draw() override;
+  void onClose( finalcut::FCloseEvent *evt ) override;
+  void onShow( finalcut::FShowEvent *evt ) override;
+  void onKeyPress( finalcut::FKeyEvent *evt ) override;
+  void adjustSize() override;
 
 private:
+  void layoutChildren();
 };
 
 
 MainWindow::MainWindow( finalcut::FWidget *parent )
   : finalcut::FWindow( parent ) {
-  //setModal( true );
-  //setResizeable( false );
-  //setMinimizable( false );
-  //setMinimumSize( getSize() );
-  //unsetBorder();
-  //activateDialog();
 }
 
 MainWindow::~MainWindow() {
@@ -29,7 +25,13 @@ MainWindow::~MainWindow() {
 
 void MainWindow::draw() {
   //finalcut::FWindow::draw();
-  print() << finalcut::FPoint{2, 2} << "Hello";
+  //print() << finalcut::FPoint{2, 2} << "Hello";
+
+  finalcut::FSize win_size = getSize();
+  int x = win_size.getWidth() / 2 - 3;
+  int y = win_size.getHeight() / 2;
+
+  print() << finalcut::FPoint{x, y} << "Hello";
 }
 
 void MainWindow::onClose( finalcut::FCloseEvent *evt ) {
@@ -49,6 +51,16 @@ void MainWindow::onKeyPress( finalcut::FKeyEvent *evt ) {
   } else {
     finalcut::FWindow::onKeyPress( evt );
   }
+}
+
+void MainWindow::adjustSize() {
+  setSize({ getDesktopWidth(), getDesktopHeight() });
+  layoutChildren();
+  redraw();
+}
+
+void MainWindow::layoutChildren() {
+  // TODO
 }
 
 int main( int argc, char **argv ) {
