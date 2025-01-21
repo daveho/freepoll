@@ -51,7 +51,6 @@ void MainWindow::onKeyPress( finalcut::FKeyEvent *evt ) {
 int main( int argc, char **argv ) {
   finalcut::FApplication app { argc, argv };
   finalcut::FVTerm::setNonBlockingRead();
-  app.setDarkTheme();
 
   MainWindow main_win { &app };
   main_win.setGeometry( finalcut::FPoint{4, 4}, finalcut::FSize{10, 5} );
@@ -59,5 +58,10 @@ int main( int argc, char **argv ) {
   finalcut::FWidget::setMainWidget( &main_win );
 
   main_win.show();
+
+  finalcut::FApplication::setDarkTheme();
+  app.resetColors();
+  app.redraw();
+
   return app.exec();
 }
