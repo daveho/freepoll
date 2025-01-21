@@ -56,6 +56,10 @@ TuiEvent &TuiEvent::operator=( const TuiEvent &rhs ) {
   return *this;
 }
 
+TuiEvent::Type TuiEvent::get_type() const {
+  return m_type;
+}
+
 int TuiEvent::get_x() const {
   return m_x;
 }
@@ -72,6 +76,11 @@ int TuiEvent::get_width() const {
 int TuiEvent::get_height() const {
   assert( m_type == RESIZE );
   return m_y;
+}
+
+int TuiEvent::get_keypress() const {
+  assert( m_type == KEYPRESS );
+  return m_x;
 }
 
 Widget::Widget()
@@ -93,14 +102,14 @@ int Widget::get_height() const {
 void Widget::resize( int w, int h ) {
   m_width = w;
   m_height = h;
-  on_resize( w, h );
+  on_resize( TuiEvent( TuiEvent::RESIZE, w, h) );
 }
 
 bool Widget::allow_focus() const {
   return false;
 }
 
-void Widget::on_resize( int w, int h ) {
+void Widget::on_resize( const TuiEvent &resize_evt ) {
   // Do nothing: subclasses can override
 }
 

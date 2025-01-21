@@ -17,16 +17,19 @@ private:
   int m_x, m_y;
 
 public:
-  TuiEvent( Type type, int x, int y );
+  TuiEvent( Type type, int x = -1, int y = -1 );
   TuiEvent( const TuiEvent &other );
   ~TuiEvent();
 
   TuiEvent &operator=( const TuiEvent &rhs );
 
+  Type get_type() const;
+
   int get_x() const;
   int get_y() const;
   int get_width() const;
   int get_height() const;
+  int get_keypress() const;
 };
 
 class Widget {
@@ -47,7 +50,7 @@ public:
   void resize( int w, int h );
 
   virtual bool allow_focus() const;
-  virtual void on_resize( int w, int h );
+  virtual void on_resize( const TuiEvent &resize_evt );
   virtual void on_keypress( int ch );
   virtual void paint( WINDOW *win );
 };
