@@ -1,6 +1,6 @@
 #include <final/final.h>
 
-class MainWindow : public finalcut::FDialog {
+class MainWindow : public finalcut::FWindow {
 public:
   MainWindow( finalcut::FWidget *parent = nullptr );
   ~MainWindow();
@@ -15,17 +15,20 @@ private:
 
 
 MainWindow::MainWindow( finalcut::FWidget *parent )
-  : finalcut::FDialog( parent ) {
-  FDialog::setStatusbarMessage( "Press Q to quit" );
-
-  activateDialog();
+  : finalcut::FWindow( parent ) {
+  //setModal( true );
+  //setResizeable( false );
+  //setMinimizable( false );
+  //setMinimumSize( getSize() );
+  //unsetBorder();
+  //activateDialog();
 }
 
 MainWindow::~MainWindow() {
 }
 
 void MainWindow::draw() {
-  finalcut::FDialog::draw();
+  //finalcut::FWindow::draw();
   print() << finalcut::FPoint{2, 2} << "Hello";
 }
 
@@ -44,7 +47,7 @@ void MainWindow::onKeyPress( finalcut::FKeyEvent *evt ) {
     close();
     evt->accept();
   } else {
-    finalcut::FDialog::onKeyPress( evt );
+    finalcut::FWindow::onKeyPress( evt );
   }
 }
 
@@ -53,7 +56,8 @@ int main( int argc, char **argv ) {
   finalcut::FVTerm::setNonBlockingRead();
 
   MainWindow main_win { &app };
-  main_win.setGeometry( finalcut::FPoint{4, 4}, finalcut::FSize{10, 5} );
+  //main_win.setGeometry( finalcut::FPoint{4, 4}, finalcut::FSize{10, 5} );
+  main_win.setGeometry( finalcut::FPoint{1, 1}, app.getSize() );
 
   finalcut::FWidget::setMainWidget( &main_win );
 
