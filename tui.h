@@ -1,7 +1,7 @@
 #ifndef TUI_H
 #define TUI_H
 
-#include <ncurses.h>
+#include <ncursesw/curses.h>
 #include <string>
 
 class Widget {

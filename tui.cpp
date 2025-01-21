@@ -1,4 +1,34 @@
+#include "utf8.h"
 #include "tui.h"
+
+namespace {
+
+// Trim a utf-8 string so that is has a specified number
+// of characters. Note that this ignores the possibility
+// of a character requiring a double-width glyph.
+std::string utf8_trim( const std::string &s, int len ) {
+  if ( len <= 0 )
+    return "";
+
+  unsigned sz = unsigned(len), count = 0;
+  auto i = s.begin();
+
+  std::string result;
+
+  while ( i != s.end() && count < sz ) {
+    try {
+      int cp = utf8::next( i, s.end() );
+      ++count;
+      utf8::append( cp, result );
+    } catch ( utf8::invalid_utf8 &ex ) {
+      break;
+    }
+  }
+
+  return result;
+}
+
+}
 
 Widget::Widget()
   : m_width( -1 )
@@ -45,7 +75,7 @@ Label::~Label() {
 }
 
 void Label::paint( WINDOW *win ) {
-  std::string disp = m_text.substr( 0, size_t( get_width() ) );
+  std::string disp = utf8_trim( m_text, get_width() );
   wclear( win );
   mvwprintw( win, 0, 0, "%s", disp.c_str() );
 }
