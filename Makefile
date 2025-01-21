@@ -14,7 +14,7 @@ EXTRA_DEFS = -DFREEPOLL_IS_POSIX
 endif
 
 CXXFLAGS = -g -Wall -std=c++17 $(EXTRA_DEFS) \
-	$(shell pkg-config $(HIDAPI_PKG) --cflags-only-I) \
+	$(shell pkg-config $(HIDAPI_PKG) finalcut --cflags-only-I) \
 	$(shell wx-config --cxxflags)
 CXX = g++
 
@@ -23,6 +23,7 @@ COMMON_SRCS = poll.cpp base.cpp frequency.cpp exception.cpp message.cpp \
 	observable.cpp observer.cpp timer.cpp datastore.cpp course.cpp \
 	screenshot.cpp
 TUI_SRCS = main.cpp
+TUI2_SRCS = freepoll_tui.cpp
 GUI_SRCS = guimain.cpp poll_view.cpp timer_view.cpp \
 	poll_response_count_view.cpp poll_model.cpp poll_frequency_view.cpp \
 	bar_graph_view.cpp
@@ -31,11 +32,21 @@ ALL_SRCS = $(COMMON_SRCS) $(TUI_SRCS) $(GUI_SRCS)
 
 COMMON_OBJS = $(COMMON_SRCS:%.cpp=%.o)
 TUI_OBJS = $(TUI_SRCS:%.cpp=%.o)
+TUI2_OBJS = $(TUI2_SRCS:%.cpp=%.o)
 GUI_OBJS = $(GUI_SRCS:%.cpp=%.o)
 
 HIDAPI_LDFLAGS = $(shell pkg-config $(HIDAPI_PKG) --libs)
 TUI_LIBS = $(HIDAPI_LDFLAGS) -lpthread
 GUI_LIBS = $(HIDAPI_LDFLAGS) $(shell wx-config --libs)
+
+FINALCUT_LDFLAGS = $(shell pkg-config finalcut --libs)
+
+# Specify -rpath for finalcut shared library when linking.
+# This is helpful if finalcut is installed locally
+# (e.g., in /usr/local).
+TUI2_LIBS_RPATH = -Wl,-rpath=$(shell pkg-config finalcut --libs-only-L | perl -ne 's,^-L,,;print')
+
+TUI2_LIBS = $(TUI2_LIBS_RPATH) $(FINALCUT_LDFLAGS)
 
 %.o : %.cpp
 	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o
@@ -47,6 +58,9 @@ freepoll : $(TUI_OBJS) $(COMMON_OBJS)
 
 freepoll-gui : $(GUI_OBJS) $(COMMON_OBJS)
 	$(CXX) -o $@ $(GUI_OBJS) $(COMMON_OBJS) $(GUI_LIBS)
+
+freepoll-tui : $(TUI2_OBJS)
+	$(CXX) -o $@ $(TUI2_OBJS) $(TUI2_LIBS)
 
 clean :
 	rm -f *.o freepoll freepoll-gui depend.mak
