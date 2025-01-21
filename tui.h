@@ -4,6 +4,31 @@
 #include <ncursesw/curses.h>
 #include <string>
 
+class TuiEvent {
+public:
+  enum Type {
+    RESIZE,
+    FOCUS,
+    KEYPRESS,
+  };
+
+private:
+  Type m_type;
+  int m_x, m_y;
+
+public:
+  TuiEvent( Type type, int x, int y );
+  TuiEvent( const TuiEvent &other );
+  ~TuiEvent();
+
+  TuiEvent &operator=( const TuiEvent &rhs );
+
+  int get_x() const;
+  int get_y() const;
+  int get_width() const;
+  int get_height() const;
+};
+
 class Widget {
 private:
   int m_width, m_height;

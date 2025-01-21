@@ -1,9 +1,10 @@
+#include <cassert>
 #include "utf8.h"
 #include "tui.h"
 
 namespace {
 
-// Trim a utf-8 string so that is has a specified number
+// Trim a utf-8 string so that is has (at most) a specified number
 // of characters. Note that this ignores the possibility
 // of a character requiring a double-width glyph.
 std::string utf8_trim( const std::string &s, int len ) {
@@ -28,6 +29,49 @@ std::string utf8_trim( const std::string &s, int len ) {
   return result;
 }
 
+}
+
+TuiEvent::TuiEvent( Type type, int x, int y )
+  : m_type( type )
+  , m_x( x )
+  , m_y( y ) {
+
+}
+
+TuiEvent::TuiEvent( const TuiEvent &other )
+  : m_type( other.m_type )
+  , m_x( other.m_x )
+  , m_y( other.m_y ) {
+}
+
+TuiEvent::~TuiEvent() {
+}
+
+TuiEvent &TuiEvent::operator=( const TuiEvent &rhs ) {
+  if ( this != &rhs ) {
+    m_type = rhs.m_type;
+    m_x = rhs.m_x;
+    m_y = rhs.m_y;
+  }
+  return *this;
+}
+
+int TuiEvent::get_x() const {
+  return m_x;
+}
+
+int TuiEvent::get_y() const {
+  return m_y;
+}
+
+int TuiEvent::get_width() const {
+  assert( m_type == RESIZE );
+  return m_x;
+}
+
+int TuiEvent::get_height() const {
+  assert( m_type == RESIZE );
+  return m_y;
 }
 
 Widget::Widget()
