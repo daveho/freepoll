@@ -13,11 +13,11 @@ Fl_Pixmap bar_graph_pixmap( bar_graph_icon );
 }
 
 F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
-  : Fl_Window( WIDTH, HEIGHT, "FreePoll " FREEPOLL_VERSION "-fltk" )
+  : Fl_Window( WIDTH, HEIGHT_NOGRAPH, "FreePoll " FREEPOLL_VERSION "-fltk" )
   , m_base( base )
   , m_datastore( datastore )
   , m_model( nullptr )
-  , m_graph_shown( true )
+  , m_graph_shown( false )
   , m_tile( 0, 0, WIDTH, HEIGHT )
   , m_course_chooser( 0, COURSE_CHOOSER_Y, WIDTH, COURSE_CHOOSER_HEIGHT )
   , m_controls( 0, CONTROLS_Y, WIDTH, CONTROLS_HEIGHT )
