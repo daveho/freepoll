@@ -17,6 +17,7 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   , m_base( base )
   , m_datastore( datastore )
   , m_model( nullptr )
+  , m_graph_shown( true )
   , m_tile( 0, 0, WIDTH, HEIGHT )
   , m_course_chooser( 0, COURSE_CHOOSER_Y, WIDTH, COURSE_CHOOSER_HEIGHT )
   , m_controls( 0, CONTROLS_Y, WIDTH, CONTROLS_HEIGHT )
@@ -53,6 +54,7 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
 
   m_graph_btn.image( &bar_graph_pixmap );
   m_graph_btn.clear_visible_focus();
+  m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>(this) );
 
   for ( auto course : m_datastore->get_courses() )
     m_course_chooser.add( course->get_display_string().c_str() );
@@ -71,4 +73,17 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 
 void F_FreePollWindow::on_update(Observable *observable, int hint) {
 
+}
+
+void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
+  F_FreePollWindow *win = static_cast<F_FreePollWindow*>( data );
+  if ( win->m_graph_shown ) {
+    // resize the window to hide the graph
+    win->resize( win->x(), win->y(), win->w(), HEIGHT_NOGRAPH );
+    win->m_graph_shown = false;
+  } else {
+    // resize the window to show the graph
+    win->resize( win->x(), win->y(), win->w(), HEIGHT );
+    win->m_graph_shown = true;
+  }
 }

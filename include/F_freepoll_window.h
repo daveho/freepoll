@@ -8,7 +8,6 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Button.H>
-//#include <FL/Fl_Output.H>
 #include "observer.h"
 #include "base.h"
 #include "datastore.h"
@@ -34,6 +33,7 @@ public:
   static const int BARGRAPH_HEIGHT = 200;
 
   static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
+  static const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT;
 
   static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT - SPACING*2;
   static const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
@@ -55,6 +55,7 @@ private:
   Base *m_base;
   DataStore *m_datastore;
   PollModel *m_model;
+  bool m_graph_shown;
 
   // containers
   Fl_Tile m_tile;
@@ -75,6 +76,8 @@ public:
 
   void show( int argc, char **argv );
   virtual void on_update(Observable *observable, int hint);
+
+  static void on_graph_button_clicked( Fl_Widget *w, void *data );
 
 private:
 };
