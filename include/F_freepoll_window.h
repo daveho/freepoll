@@ -5,7 +5,9 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Tile.H>
 #include <FL/Fl_Box.H>
+#include <FL/Fl_Pack.H>
 #include <FL/Fl_Choice.H>
+#include <FL/Fl_Button.H>
 #include "observer.h"
 #include "base.h"
 #include "datastore.h"
@@ -17,16 +19,23 @@
 // all model objects.
 class F_FreePollWindow : public Fl_Window, public Observer {
 public:
-  static const int DEFAULT_WIDTH = 360;
+  // for simplicity, all sizes and positions are hard-coded
 
-  static const int DEFAULT_COURSE_CHOOSER_HEIGHT = 32;
-  static const int DEFAULT_CONTROLS_HEIGHT = 64;
-  static const int DEFAULT_BARGRAPH_HEIGHT = 200;
+  static const int SPACING = 4;
 
-  static const int DEFAULT_HEIGHT =
-    DEFAULT_COURSE_CHOOSER_HEIGHT +
-    DEFAULT_CONTROLS_HEIGHT +
-    DEFAULT_BARGRAPH_HEIGHT;
+  static const int WIDTH = 360;
+
+  static const int COURSE_CHOOSER_Y = 0;
+  static const int COURSE_CHOOSER_HEIGHT = 32;
+  static const int CONTROLS_Y = COURSE_CHOOSER_Y + COURSE_CHOOSER_HEIGHT;
+  static const int CONTROLS_HEIGHT = 64;
+  static const int BARGRAPH_Y = CONTROLS_Y + CONTROLS_HEIGHT;
+  static const int BARGRAPH_HEIGHT = 200;
+
+  static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
+
+  static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT - SPACING*2;
+  static const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
 
 private:
   Base *m_base;
@@ -36,7 +45,9 @@ private:
   // containers
   Fl_Tile m_tile;
   Fl_Choice m_course_chooser;
-  Fl_Box m_controls_box;
+  Fl_Pack m_controls;
+  Fl_Button m_poll_btn;
+  Fl_End m_controls_end;
   Fl_Box m_graph_box;
   Fl_End m_tile_end;
 

@@ -4,14 +4,15 @@
 #include "F_freepoll_window.h"
 
 F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
-  : Fl_Window( DEFAULT_WIDTH, DEFAULT_HEIGHT )
+  : Fl_Window( WIDTH, HEIGHT )
   , m_base( base )
   , m_datastore( datastore )
   , m_model( nullptr )
-  , m_tile( 0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT )
-  , m_course_chooser( 0, 0, DEFAULT_WIDTH, DEFAULT_COURSE_CHOOSER_HEIGHT )
-  , m_controls_box( 0, DEFAULT_COURSE_CHOOSER_HEIGHT, DEFAULT_WIDTH, DEFAULT_CONTROLS_HEIGHT )
-  , m_graph_box( 0, DEFAULT_COURSE_CHOOSER_HEIGHT+DEFAULT_CONTROLS_HEIGHT, DEFAULT_WIDTH, DEFAULT_BARGRAPH_HEIGHT ) {
+  , m_tile( 0, 0, WIDTH, HEIGHT )
+  , m_course_chooser( 0, COURSE_CHOOSER_Y, WIDTH, COURSE_CHOOSER_HEIGHT )
+  , m_controls( 0, CONTROLS_Y, WIDTH, CONTROLS_HEIGHT )
+  , m_poll_btn( 0, 0, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
+  , m_graph_box( 0, BARGRAPH_Y, WIDTH, BARGRAPH_HEIGHT ) {
 
   // Layout is
   //   +--------------------------------------------+
@@ -21,15 +22,18 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   //   +--------------------------------------------+
   //   |                bar graph                   |
   //   +--------------------------------------------+
-  //
-  // There are three Fl_Pack containers with horizontal
-  // layout for each of the three areas. A top-level Fl_Pack
-  // with vertical layout contains these Fl_Packs.
 
-  m_controls_box.color( 0xFF000000 );
-  m_controls_box.box( FL_FLAT_BOX );
+  m_controls.color( 0xFF000000 );
+  m_controls.box( FL_FLAT_BOX );
   m_graph_box.color( 0x0000FF00 );
   m_graph_box.box( FL_FLAT_BOX );
+
+  m_controls.type( Fl_Pack::HORIZONTAL );
+  m_controls.spacing( SPACING );
+  m_controls.redraw();
+
+  m_poll_btn.label( "@>" );
+  m_poll_btn.redraw();
 
   for ( auto course : m_datastore->get_courses() )
     m_course_chooser.add( course->get_display_string().c_str() );
