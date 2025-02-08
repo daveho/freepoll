@@ -23,17 +23,16 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   //   |                bar graph                   |
   //   +--------------------------------------------+
 
-  m_controls.color( 0xFF000000 );
-  m_controls.box( FL_FLAT_BOX );
+  // m_controls.color( 0xFF000000 );
+  // m_controls.box( FL_FLAT_BOX );
   m_graph_box.color( 0x0000FF00 );
   m_graph_box.box( FL_FLAT_BOX );
 
   m_controls.type( Fl_Pack::HORIZONTAL );
   m_controls.spacing( SPACING );
-  m_controls.redraw();
 
   m_poll_btn.label( "@>" );
-  m_poll_btn.redraw();
+  m_poll_btn.clear_visible_focus();
 
   for ( auto course : m_datastore->get_courses() )
     m_course_chooser.add( course->get_display_string().c_str() );
