@@ -1,3 +1,4 @@
 /freepoll
 /freepoll-gui
 /*.o
+/freepoll-gui-fltk
