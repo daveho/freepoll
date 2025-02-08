@@ -27,7 +27,7 @@ COMMON_SRCS = poll.cpp base.cpp frequency.cpp exception.cpp message.cpp \
 	response_callback.cpp poll_response_collector.cpp poll_runner.cpp \
 	observable.cpp observer.cpp timer.cpp datastore.cpp course.cpp \
 	screenshot.cpp
-GUI_SRCS = F_freepoll_window.cpp
+GUI_SRCS = F_guimain.cpp F_freepoll_window.cpp
 ALL_SRCS = $(COMMON_SRCS) $(GUI_SRCS)
 
 COMMON_OBJS = $(COMMON_SRCS:%.cpp=build/%.o)

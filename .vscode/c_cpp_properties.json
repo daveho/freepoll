@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/include/hidapi",
                 "/usr/include/wx-3.2",
-                "/usr/lib/x86_64-linux-gnu/wx/include/gtk3-unicode-3.2"
+                "/usr/lib/x86_64-linux-gnu/wx/include/gtk3-unicode-3.2",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "FREEPOLL_IS_POSIX",
