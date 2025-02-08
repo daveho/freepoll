@@ -5,6 +5,7 @@
 #include <FL/Fl_Window.H>
 #include "observer.h"
 #include "base.h"
+#include "datastore.h"
 #include "poll_model.h"
 
 // Rather than properly decomposing the GUI into views for
@@ -18,16 +19,17 @@ public:
 
 private:
   Base *m_base;
+  DataStore *m_datastore;
   PollModel *m_model;
 
 public:
-  F_FreePollWindow();
+  F_FreePollWindow( Base *base, DataStore *datastore );
   ~F_FreePollWindow();
 
-  bool load_courses();
-  bool connect();
-
+  void show( int argc, char **argv );
   virtual void on_update(Observable *observable, int hint);
+
+private:
 };
 
 #endif // F_FREEPOLL_WINDOW_H

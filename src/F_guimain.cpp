@@ -1,7 +1,34 @@
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include "exception.h"
 #include "F_freepoll_window.h"
 
 int main( int argc, char **argv ) {
-  F_FreePollWindow win;
+  // FIXME: it would be nice to pop up a GUI error dialog if initialization fails
+
+  Base *base = new Base();
+  try {
+    base->initialize();
+  } catch ( PollException &ex ) {
+    std::cerr << "Couldn't connect to base: " << ex.what() << "\n";
+    return 1;
+  }
+
+  const char *home = ::getenv("HOME");
+  if ( home == nullptr ) {
+    std::cerr << "HOME environment variable isn't set\n";
+    return 1;
+  }
+  std::string data_dir = std::string( home ) + "/FreePoll";
+  DataStore *datastore = new DataStore( data_dir );
+  datastore->locate_courses();
+  if ( datastore->get_courses().empty() ) {
+    std::cerr << data_dir << " does not contain any courses\n";
+    return 1;
+  }
+
+  F_FreePollWindow win( base, datastore );
   win.show( argc, argv );
   return Fl::run();
 }
