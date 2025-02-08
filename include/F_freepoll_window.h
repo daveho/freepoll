@@ -62,9 +62,8 @@ public:
   static const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
 
 private:
-  Base *m_base;
-  DataStore *m_datastore;
   PollModel *m_model;
+  DataStore *m_datastore;
   bool m_graph_shown;
 
   // containers
@@ -85,7 +84,7 @@ private:
   Fl_End m_pack_end;
 
 public:
-  F_FreePollWindow( Base *base, DataStore *datastore );
+  F_FreePollWindow( PollModel *model, DataStore *datastore );
   ~F_FreePollWindow();
 
   void show( int argc, char **argv );
@@ -95,6 +94,7 @@ public:
   static void on_graph_button_clicked( Fl_Widget *w, void *data );
 
 private:
+  void update_timer_display();
   void update_frequency_display();
 };
 

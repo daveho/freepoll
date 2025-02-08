@@ -2,9 +2,11 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Pixmap.H>
 #include <iostream>
+#include <sstream>
 #include <cassert>
 #include "datatypes.h"
 #include "course.h"
+#include "timer.h"
 #include "bar_graph_icon.h"
 #include "F_freepoll_window.h"
 
@@ -14,18 +16,17 @@ Fl_Pixmap bar_graph_pixmap( bar_graph_icon );
 
 }
 
-F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
+F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   : Fl_Window( WIDTH, HEIGHT_NOGRAPH, "FreePoll " FREEPOLL_VERSION "-fltk" )
-  , m_base( base )
+  , m_model( model )
   , m_datastore( datastore )
-  , m_model( nullptr )
   , m_graph_shown( false )
   , m_pack( 0, 0, WIDTH, HEIGHT )
   , m_course_chooser( 0, 0, WIDTH, COURSE_CHOOSER_HEIGHT )
   , m_controls( 0, 0, WIDTH, CONTROLS_HEIGHT )
   , m_poll_btn( POLL_BTN_X, CONTROL_Y, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
-  , m_timer_display( TIMER_DISPLAY_X, CONTROL_Y, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, "0:00" )
-  , m_count_display( COUNT_DISPLAY_X, CONTROL_Y, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "0" )
+  , m_timer_display( TIMER_DISPLAY_X, CONTROL_Y, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, "" )
+  , m_count_display( COUNT_DISPLAY_X, CONTROL_Y, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "" )
   , m_freq_display( FREQ_DISPLAY_X, CONTROL_Y, FREQ_DISPLAY_WIDTH, FREQ_DISPLAY_HEIGHT, "" )
   , m_graph_btn( GRAPH_BTN_X, CONTROL_Y, GRAPH_BTN_WIDTH, GRAPH_BTN_HEIGHT )
   , m_graph_box( 0, 0, WIDTH, BARGRAPH_HEIGHT ) {
@@ -65,13 +66,16 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
     m_course_chooser.add( course->get_display_string().c_str() );
   m_course_chooser.value( 0 );
 
-  // Display current frequency
+  // Sync displays with model
+  update_timer_display();
   update_frequency_display();
 
   // register callbacks to handle UI events
-  m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>(this) );
+  m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>( this ) );
   m_course_chooser.callback( on_course_change, static_cast<void*>( this ) );
 
+  // Observe the PollModel
+  m_model->add_observer( this );
 }
 
 F_FreePollWindow::~F_FreePollWindow() {
@@ -85,12 +89,21 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 }
 
 void F_FreePollWindow::on_update(Observable *observable, int hint) {
-
+  switch ( hint ) {
+  case PollModel::POLL_MODEL_SELECTED_COURSE_CHANGED:
+    update_frequency_display();
+    break;
+  
+  default:
+    break;
+  }
 }
 
 void F_FreePollWindow::on_course_change( Fl_Widget *w, void *data ) {
+  // Callback for when course is selected in the course chooser
   F_FreePollWindow *win = static_cast<F_FreePollWindow*>( data );
-  win->update_frequency_display();
+  int course_index = win->m_course_chooser.value();
+  win->m_model->set_current_course( unsigned(course_index) );
 }
 
 void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
@@ -104,6 +117,12 @@ void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
     win->resize( win->x(), win->y(), win->w(), HEIGHT );
     win->m_graph_shown = true;
   }
+}
+
+void F_FreePollWindow::update_timer_display() {
+  Timer *timer = m_model->get_timer();
+  std::string disp_time = timer->get_display_time();
+  m_timer_display.copy_label( disp_time.c_str() );
 }
 
 void F_FreePollWindow::update_frequency_display() {

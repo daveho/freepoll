@@ -7,14 +7,7 @@
 int main( int argc, char **argv ) {
   // FIXME: it would be nice to pop up a GUI error dialog if initialization fails
 
-  Base *base = new Base();
-  try {
-    base->initialize();
-  } catch ( PollException &ex ) {
-    std::cerr << "Couldn't connect to base: " << ex.what() << "\n";
-    return 1;
-  }
-
+  // Create data store and make sure there is at least one course
   const char *home = ::getenv("HOME");
   if ( home == nullptr ) {
     std::cerr << "HOME environment variable isn't set\n";
@@ -28,7 +21,18 @@ int main( int argc, char **argv ) {
     return 1;
   }
 
-  F_FreePollWindow win( base, datastore );
+  // Instantiate PollModel
+  PollModel *model = new PollModel( datastore );
+
+  // Initialize base
+  try {
+    model->get_base()->initialize();
+  } catch ( PollException &ex ) {
+    std::cerr << "Couldn't connect to base: " << ex.what() << "\n";
+    return 1;
+  }
+
+  F_FreePollWindow win( model, datastore );
   win.show( argc, argv );
   return Fl::run();
 }

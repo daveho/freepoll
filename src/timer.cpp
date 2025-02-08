@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -17,6 +17,8 @@
 
 #include <cassert>
 #include <chrono>
+#include <sstream>
+#include <iomanip>
 #include "timer.h"
 
 Timer::Timer()
@@ -63,6 +65,15 @@ bool Timer::is_running() const {
 unsigned Timer::get_num_seconds() const {
   std::lock_guard<std::mutex> guard(m_lock);
   return m_num_seconds;
+}
+
+std::string Timer::get_display_time() const {
+  unsigned num_seconds = get_num_seconds();
+  unsigned min = num_seconds / 60;
+  unsigned sec = num_seconds % 60;
+  std::stringstream ss;
+  ss << min << ":" << std::setfill('0') << std::setw(2) << sec;
+  return ss.str();
 }
 
 void Timer::run(Timer *timer) {

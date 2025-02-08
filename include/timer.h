@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -20,6 +20,7 @@
 
 #include <thread>
 #include <mutex>
+#include <string>
 #include "observable.h"
 
 class Timer : public Observable {
@@ -56,6 +57,8 @@ public:
   bool is_running() const;
 
   unsigned get_num_seconds() const;
+
+  std::string get_display_time() const;
 
 private:
   static void run(Timer *timer);
