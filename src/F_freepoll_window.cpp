@@ -12,6 +12,8 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   , m_course_chooser( 0, COURSE_CHOOSER_Y, WIDTH, COURSE_CHOOSER_HEIGHT )
   , m_controls( 0, CONTROLS_Y, WIDTH, CONTROLS_HEIGHT )
   , m_poll_btn( 0, 0, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
+  , m_timer_display( 0, 0, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, " 0:00" )
+  , m_count_display( 0, 0, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "  0" )
   , m_graph_box( 0, BARGRAPH_Y, WIDTH, BARGRAPH_HEIGHT ) {
 
   // Layout is
@@ -23,8 +25,6 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   //   |                bar graph                   |
   //   +--------------------------------------------+
 
-  // m_controls.color( 0xFF000000 );
-  // m_controls.box( FL_FLAT_BOX );
   m_graph_box.color( 0x0000FF00 );
   m_graph_box.box( FL_FLAT_BOX );
 
@@ -33,6 +33,12 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
 
   m_poll_btn.label( "@>" );
   m_poll_btn.clear_visible_focus();
+
+  m_timer_display.labelsize( TIMER_DISPLAY_HEIGHT - 12 );
+  m_timer_display.labelcolor( DISABLED_TEXT_COLOR );
+
+  m_count_display.labelsize( COUNT_DISPLAY_HEIGHT - 12 );
+  m_count_display.labelcolor( DISABLED_TEXT_COLOR );
 
   for ( auto course : m_datastore->get_courses() )
     m_course_chooser.add( course->get_display_string().c_str() );

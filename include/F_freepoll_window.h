@@ -8,6 +8,7 @@
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Button.H>
+//#include <FL/Fl_Output.H>
 #include "observer.h"
 #include "base.h"
 #include "datastore.h"
@@ -37,6 +38,14 @@ public:
   static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT - SPACING*2;
   static const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
 
+  static const int TIMER_DISPLAY_WIDTH = 100;
+  static const int TIMER_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+
+  static const int COUNT_DISPLAY_WIDTH = 48;
+  static const int COUNT_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+
+  static const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
+
 private:
   Base *m_base;
   DataStore *m_datastore;
@@ -47,6 +56,8 @@ private:
   Fl_Choice m_course_chooser;
   Fl_Pack m_controls;
   Fl_Button m_poll_btn;
+  Fl_Box m_timer_display;
+  Fl_Box m_count_display;
   Fl_End m_controls_end;
   Fl_Box m_graph_box;
   Fl_End m_tile_end;
