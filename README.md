@@ -54,7 +54,7 @@ make -j
 
 (The `-j` option is just so `make` uses all of your CPU cores.)
 
-Two executables will be built.
+Two executables will be built in the `build` directory.
 
 The `freepoll-gui` executable is probably the one you want to use.
 The [Guide](guide.md) explains how to configure and use this program.

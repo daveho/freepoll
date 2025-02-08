@@ -13,7 +13,7 @@ HIDAPI_PKG = hidapi-libusb
 EXTRA_DEFS = -DFREEPOLL_IS_POSIX
 endif
 
-CXXFLAGS = -g -Wall -std=c++17 $(EXTRA_DEFS) \
+CXXFLAGS = -g -Wall -std=c++17 $(EXTRA_DEFS) -Iinclude \
 	$(shell pkg-config $(HIDAPI_PKG) --cflags-only-I) \
 	$(shell wx-config --cxxflags)
 CXX = g++
@@ -29,30 +29,32 @@ GUI_SRCS = guimain.cpp poll_view.cpp timer_view.cpp \
 
 ALL_SRCS = $(COMMON_SRCS) $(TUI_SRCS) $(GUI_SRCS)
 
-COMMON_OBJS = $(COMMON_SRCS:%.cpp=%.o)
-TUI_OBJS = $(TUI_SRCS:%.cpp=%.o)
-GUI_OBJS = $(GUI_SRCS:%.cpp=%.o)
+COMMON_OBJS = $(COMMON_SRCS:%.cpp=build/%.o)
+TUI_OBJS = $(TUI_SRCS:%.cpp=build/%.o)
+GUI_OBJS = $(GUI_SRCS:%.cpp=build/%.o)
 
 HIDAPI_LDFLAGS = $(shell pkg-config $(HIDAPI_PKG) --libs)
 TUI_LIBS = $(HIDAPI_LDFLAGS) -lpthread
 GUI_LIBS = $(HIDAPI_LDFLAGS) $(shell wx-config --libs)
 
-%.o : %.cpp
-	$(CXX) $(CXXFLAGS) -c $*.cpp -o $*.o
+build/%.o : src/%.cpp
+	$(CXX) $(CXXFLAGS) -c src/$*.cpp -o build/$*.o
 
-all : freepoll freepoll-gui
+all : build/freepoll build/freepoll-gui
 
-freepoll : $(TUI_OBJS) $(COMMON_OBJS)
+build/freepoll : $(TUI_OBJS) $(COMMON_OBJS)
 	$(CXX) -o $@ $(TUI_OBJS) $(COMMON_OBJS) $(TUI_LIBS)
 
-freepoll-gui : $(GUI_OBJS) $(COMMON_OBJS)
+build/freepoll-gui : $(GUI_OBJS) $(COMMON_OBJS)
 	$(CXX) -o $@ $(GUI_OBJS) $(COMMON_OBJS) $(GUI_LIBS)
 
 clean :
-	rm -f *.o freepoll freepoll-gui depend.mak
+	rm -f build/*.o build/freepoll build/freepoll-gui depend.mak
 
 depend :
-	$(CXX) $(CXXFLAGS) -M $(ALL_SRCS) > depend.mak
+	$(CXX) $(CXXFLAGS) -M $(ALL_SRCS:%.cpp=src/%.cpp) \
+		| scripts/fixdeps.rb \
+		> depend.mak
 
 depend.mak :
 	touch $@
