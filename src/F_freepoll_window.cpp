@@ -1,10 +1,19 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Pack.H>
+#include <FL/Fl_Pixmap.H>
+#include "datatypes.h"
 #include "course.h"
+#include "bar_graph_icon.h"
 #include "F_freepoll_window.h"
 
+namespace {
+
+Fl_Pixmap bar_graph_pixmap( bar_graph_icon );
+
+}
+
 F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
-  : Fl_Window( WIDTH, HEIGHT )
+  : Fl_Window( WIDTH, HEIGHT, "FreePoll " FREEPOLL_VERSION "-fltk" )
   , m_base( base )
   , m_datastore( datastore )
   , m_model( nullptr )
@@ -14,6 +23,8 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
   , m_poll_btn( 0, 0, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
   , m_timer_display( 0, 0, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, " 0:00" )
   , m_count_display( 0, 0, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "  0" )
+  , m_gap( 0, 0, GAP_WIDTH, CONTROLS_HEIGHT )
+  , m_graph_btn( 0, 0, GRAPH_BTN_WIDTH, GRAPH_BTN_HEIGHT )
   , m_graph_box( 0, BARGRAPH_Y, WIDTH, BARGRAPH_HEIGHT ) {
 
   // Layout is
@@ -39,6 +50,9 @@ F_FreePollWindow::F_FreePollWindow( Base *base, DataStore *datastore )
 
   m_count_display.labelsize( COUNT_DISPLAY_HEIGHT - 12 );
   m_count_display.labelcolor( DISABLED_TEXT_COLOR );
+
+  m_graph_btn.image( &bar_graph_pixmap );
+  m_graph_btn.clear_visible_focus();
 
   for ( auto course : m_datastore->get_courses() )
     m_course_chooser.add( course->get_display_string().c_str() );

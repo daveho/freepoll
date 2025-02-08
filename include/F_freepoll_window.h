@@ -41,8 +41,13 @@ public:
   static const int TIMER_DISPLAY_WIDTH = 100;
   static const int TIMER_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-  static const int COUNT_DISPLAY_WIDTH = 48;
+  static const int COUNT_DISPLAY_WIDTH = 80;
   static const int COUNT_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+
+  static const int GAP_WIDTH = 50;
+
+  static const int GRAPH_BTN_WIDTH = POLL_BTN_WIDTH;
+  static const int GRAPH_BTN_HEIGHT = POLL_BTN_WIDTH;
 
   static const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
 
@@ -58,6 +63,8 @@ private:
   Fl_Button m_poll_btn;
   Fl_Box m_timer_display;
   Fl_Box m_count_display;
+  Fl_Box m_gap;
+  Fl_Button m_graph_btn;
   Fl_End m_controls_end;
   Fl_Box m_graph_box;
   Fl_End m_tile_end;
