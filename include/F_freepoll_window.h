@@ -14,6 +14,7 @@
 #include "poll_model.h"
 #include "poll_runner.h"
 #include "F_notification_queue.h"
+#include "F_bar_graph_view.h"
 
 // Rather than properly decomposing the GUI into views for
 // individual model objects, we just have a single monolithic
@@ -40,7 +41,8 @@ private:
   Fl_Button m_graph_btn;
   Fl_End m_controls_end;
 
-  Fl_Box m_graph_box;
+  //Fl_Box m_graph_box;
+  F_BarGraphView m_graph_box;
 
   Fl_End m_pack_end;
 

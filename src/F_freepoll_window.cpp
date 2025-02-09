@@ -30,7 +30,7 @@ static const int COURSE_CHOOSER_HEIGHT = 24;
 static const int CONTROLS_Y = COURSE_CHOOSER_Y + COURSE_CHOOSER_HEIGHT;
 static const int CONTROLS_HEIGHT = 54;
 static const int BARGRAPH_Y = CONTROLS_Y + CONTROLS_HEIGHT;
-static const int BARGRAPH_HEIGHT = 140;
+static const int BARGRAPH_HEIGHT = 160;
 
 static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
 static const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT;
@@ -88,9 +88,6 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   //   +--------------------------------------------+
 
   m_pack.type( Fl_Pack::VERTICAL );
-
-  m_graph_box.color( 0x0000FF00 );
-  m_graph_box.box( FL_FLAT_BOX );
 
   m_poll_btn.label( PLAY_LABEL );
   m_poll_btn.clear_visible_focus();
@@ -165,7 +162,7 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
   case Poll::POLL_STOPPED:
     update_count_display();
     update_timer_display();
-    // TODO: should update bar graph
+    m_graph_box.on_update( observable, hint, false );
     break;
   case Timer::TIMER_STARTED:
   case Timer::TIMER_NUM_SECONDS_UPDATED:
