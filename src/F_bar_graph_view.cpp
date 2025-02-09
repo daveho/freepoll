@@ -17,6 +17,10 @@ const Fl_Color BAR_COLORS[] = {
   0xFF000000,
 };
 
+const char *LABELS[] = {
+  "A", "B", "C", "D", "E",
+};
+
 const int LABEL_HEIGHT = 16;
 
 }
@@ -50,12 +54,6 @@ void F_BarGraphView::draw() {
   // draw graph background
   fl_draw_box( FL_FLAT_BOX, xpos + INSET, ypos + INSET, effective_width, effective_height, FL_WHITE );
 
-  // TODO: draw labels
-
-  // if there is no data, don't draw bars
-  if ( m_cur_responses.empty() )
-    return;
-
   // how wide the bars will be
   // (with an INSET gap between each, and an INSET
   // gap on the left and right)
@@ -63,6 +61,21 @@ void F_BarGraphView::draw() {
 
   // starting x offset of the first bar
   int x_off = ( effective_width - ( bar_width*5 + INSET * 4 ) ) / 2;
+
+  // draw labels
+  auto font = FL_HELVETICA;
+  auto font_size = Fl_Fontsize( 20 );
+  for ( int i = 0; i < 5; ++i ) {
+    int label_x = xpos + INSET + x_off + i*(bar_width + INSET) + (bar_width/2 - 5);
+
+    fl_font( font, font_size );
+    fl_color( FL_BLACK );
+    fl_draw( LABELS[i], label_x, ypos + effective_height );
+  }
+
+  // if there is no data, don't draw bars
+  if ( m_cur_responses.empty() )
+    return;
 
   // tally responses
   double count[5] = { 0.0 };
