@@ -13,6 +13,7 @@
 #include "datastore.h"
 #include "poll_model.h"
 #include "poll_runner.h"
+#include "F_notification_queue.h"
 
 // Rather than properly decomposing the GUI into views for
 // individual model objects, we just have a single monolithic
@@ -64,6 +65,7 @@ private:
   PollModel *m_model;
   DataStore *m_datastore;
   PollRunner *m_poll_runner;
+  F_NotificationQueue m_async_updates;
 
   // containers
   Fl_Pack m_pack; // overall container for window contents
@@ -95,9 +97,13 @@ public:
   static void on_poll_btn_clicked( Fl_Widget *w, void *data );
   static void on_course_change( Fl_Widget *w, void *data );
   static void on_graph_button_clicked( Fl_Widget *w, void *data );
-
+#if 0
   // handler for async updates
   static void on_async_update( void *arg );
+#endif
+
+  // timer callback so that we can deal with queued async events
+  static void on_timer_tick( void *data );
 
 private:
   // update display elements (these should generally be called

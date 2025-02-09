@@ -32,7 +32,10 @@ int main( int argc, char **argv ) {
     return 1;
   }
 
+  // Create main window, show it
   F_FreePollWindow win( model, datastore );
   win.show( argc, argv );
+
+  // run the GUI event loop
   return Fl::run();
 }

@@ -80,16 +80,15 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>( this ) );
   m_course_chooser.callback( on_course_change, static_cast<void*>( this ) );
 
-  // Observe the PollModel, Poll, and Timer
+  // Observe the PollModel (this will indirectly observe the Poll and Timer)
   m_model->add_observer( this );
-  m_model->get_poll()->add_observer( this );
-  m_model->get_timer()->add_observer( this );
+
+  // start timer to regularly poll for queued async events
+  Fl::add_timeout( 0.1, on_timer_tick, static_cast<void*>( this ) );
 }
 
 F_FreePollWindow::~F_FreePollWindow() {
-  // unregister from observing model objects
-  m_model->get_timer()->remove_observer( this );
-  m_model->get_poll()->remove_observer( this );
+  // unregister from observing the PollModel
   m_model->remove_observer( this );
 }
 
@@ -101,10 +100,15 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 
 void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
   if ( is_async ) {
+    std::cout << "recevied async update (hint=" << hint << ")\n";
+    F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
+#if 0
     // redirect the update to the main GUI thread: it will
     // then be handled as a synchronous update
-    F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
     Fl::awake( on_async_update, static_cast<void*>( update ) );
+#endif
+    // put async update object in the queue
+    m_async_updates.enqueue( update );
     return;
   }
 
@@ -227,6 +231,7 @@ void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
   win->m_model->set_bar_graph_enabled( !bar_graph_enabled );
 }
 
+#if 0
 void F_FreePollWindow::on_async_update( void *arg ) {
   // This callback is invoked from the FLTK event loop
   // to synchronize handling of asynchronous notifications.
@@ -234,11 +239,26 @@ void F_FreePollWindow::on_async_update( void *arg ) {
   // other threads to make it appear that they happened in
   // the main GUI thread.
   F_AsyncNotification *update = static_cast<F_AsyncNotification*>( arg );
+  std::cout << "handling async update (hint=" << update->get_hint() << ")\n";
   update->get_win()->on_update( update->get_observable(), update->get_hint(), false );
   delete update;
 }
+#endif
+
+void F_FreePollWindow::on_timer_tick( void *data ) {
+  // deal with any accumulated async events
+  F_FreePollWindow *win = static_cast< F_FreePollWindow* >( data );
+  while ( !win->m_async_updates.empty() ) {
+    F_AsyncNotification *update = win->m_async_updates.dequeue();
+    win->on_update( update->get_observable(), update->get_hint(), false );
+    delete update;
+  }
+  Fl::repeat_timeout( 0.1, on_timer_tick, data );
+}
 
 void F_FreePollWindow::update_timer_display() {
+  std::cout << "update timer\n";
+
   if ( m_model->is_poll_running() )
     m_timer_display.labelcolor( FL_BLACK );
   else
@@ -270,6 +290,8 @@ void F_FreePollWindow::show_or_hide_graph() {
 }
 
 void F_FreePollWindow::update_count_display() {
+  std::cout << "update count\n";
+
   if ( m_model->is_poll_running() )
     m_count_display.labelcolor( FL_BLACK );
   else

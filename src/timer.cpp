@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <chrono>
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include "timer.h"
@@ -91,6 +92,7 @@ void Timer::run(Timer *timer) {
         std::lock_guard<std::mutex> guard(timer->m_lock);
         timer->m_num_seconds = elapsed.count();
       }
+      std::cout << "timer: notify " << timer->get_num_observers() << " observer(s)\n";
       timer->notify_observers(TIMER_NUM_SECONDS_UPDATED, true);
     }
   }

@@ -34,6 +34,8 @@ public:
   virtual void remove_observer(Observer *observer);
 
   virtual void notify_observers(int hint, bool is_async);
+
+  int get_num_observers() const { return int( m_observers.size() ); }
 };
 
 #endif // OBSERVABLE_H
