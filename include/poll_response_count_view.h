@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -36,7 +36,7 @@ public:
   PollResponseCountView(wxWindow *parent, Poll *poll);
   virtual ~PollResponseCountView();
 
-  virtual void on_update(Observable *observable, int hint);
+  virtual void on_update(Observable *observable, int hint, bool is_async);
 
 private:
   wxDECLARE_EVENT_TABLE();

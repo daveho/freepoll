@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -58,7 +58,7 @@ Course *PollModel::get_current_course() const {
 void PollModel::set_current_course(unsigned selected_course) {
   assert(selected_course < m_datastore->get_courses().size());
   m_selected_course = selected_course;
-  notify_observers(POLL_MODEL_SELECTED_COURSE_CHANGED);
+  notify_observers(POLL_MODEL_SELECTED_COURSE_CHANGED, false);
 }
 
 void PollModel::set_poll_data_dir(const std::string &poll_data_dir) {
@@ -71,7 +71,7 @@ std::string PollModel::get_poll_data_dir() const {
 
 void PollModel::set_bar_graph_enabled(bool en) {
   m_bar_graph_enabled = en;
-  notify_observers(POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED);
+  notify_observers(POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED, false);
 }
 
 bool PollModel::is_bar_graph_enabled() const {
@@ -94,8 +94,8 @@ Timer *PollModel::get_timer() const {
   return m_timer;
 }
 
-void PollModel::on_update(Observable *observable, int hint) {
+void PollModel::on_update(Observable *observable, int hint, bool is_async) {
   // Poll and Timer have non-overlapping hint values,
   // so no processing is necessary.
-  notify_observers(hint);
+  notify_observers(hint, is_async);
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -33,7 +33,7 @@ public:
   virtual void add_observer(Observer *observer);
   virtual void remove_observer(Observer *observer);
 
-  virtual void notify_observers(int hint);
+  virtual void notify_observers(int hint, bool is_async);
 };
 
 #endif // OBSERVABLE_H

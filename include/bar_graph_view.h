@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -29,7 +29,7 @@ public:
   BarGraphView(wxWindow *parent, PollModel *model);
   virtual ~BarGraphView();
 
-  virtual void on_update(Observable *observable, int hint);
+  virtual void on_update(Observable *observable, int hint, bool is_async);
 
 private:
   void on_poll_data_updated(wxCommandEvent &evt);

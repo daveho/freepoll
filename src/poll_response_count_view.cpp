@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -41,7 +41,7 @@ PollResponseCountView::PollResponseCountView(wxWindow *parent, Poll *poll)
 PollResponseCountView::~PollResponseCountView() {
 }
 
-void PollResponseCountView::on_update(Observable *observable, int hint) {
+void PollResponseCountView::on_update(Observable *observable, int hint, bool is_async) {
   // this is called from the poll runner thread, so post an event
   // which will ensure that the GUI update happens in the main
   // thread

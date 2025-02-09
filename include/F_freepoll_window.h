@@ -88,12 +88,18 @@ public:
   ~F_FreePollWindow();
 
   void show( int argc, char **argv );
-  virtual void on_update(Observable *observable, int hint);
 
+  // called when an observed model object is updated
+  virtual void on_update(Observable *observable, int hint, bool is_async);
+
+  // UI event handlers
+  static void on_poll_btn_clicked( Fl_Widget *w, void *data );
   static void on_course_change( Fl_Widget *w, void *data );
   static void on_graph_button_clicked( Fl_Widget *w, void *data );
 
 private:
+  // update display elements (these should generally be called
+  // in response to UI events)
   void update_timer_display();
   void update_frequency_display();
 };

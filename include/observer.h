@@ -25,7 +25,11 @@ public:
   Observer();
   virtual ~Observer();
 
-  virtual void on_update(Observable *observable, int hint) = 0;
+  // Note: is_async is true if the update is generated
+  // in a thread other than the main UI thread, in which case
+  // it needs to be redirected to the main UI thread
+  // through some GUI-library-specific mechanism.
+  virtual void on_update(Observable *observable, int hint, bool is_async) = 0;
 };
 
 #endif // OBSERVER_H

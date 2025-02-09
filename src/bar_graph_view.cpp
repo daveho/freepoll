@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -52,7 +52,7 @@ BarGraphView::BarGraphView(wxWindow *parent, PollModel *model)
 BarGraphView::~BarGraphView() {
 }
 
-void BarGraphView::on_update(Observable *observable, int hint) {
+void BarGraphView::on_update(Observable *observable, int hint, bool is_async) {
   if (hint == Poll::POLL_STARTED || hint == Poll::POLL_STARTED || hint == Poll::POLL_RESPONSE_RECORDED) {
     // poll data changed, most likely in a thread other than the
     // GUI event loop thread, so schedule an update

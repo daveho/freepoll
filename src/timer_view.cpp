@@ -39,7 +39,7 @@ TimerView::TimerView(wxWindow *parent, Timer *timer)
 TimerView::~TimerView() {
 }
 
-void TimerView::on_update(Observable *observable, int hint) {
+void TimerView::on_update(Observable *observable, int hint, bool is_async) {
   //std::cout << "timer sent a notification\n";
 
   // this is called from the timer thread, so post an event

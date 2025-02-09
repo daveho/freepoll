@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -78,7 +78,7 @@ public:
   Poll *get_poll() const;
   Timer *get_timer() const;
 
-  virtual void on_update(Observable *observable, int hint);
+  virtual void on_update(Observable *observable, int hint, bool is_async);
 };
 
 #endif // POLL_MODEL_H

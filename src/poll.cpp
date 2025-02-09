@@ -34,7 +34,7 @@ void Poll::start() {
     m_start_mono = std::chrono::steady_clock::now();
   }
 
-  notify_observers(POLL_STARTED);
+  notify_observers(POLL_STARTED, true);
 }
 
 void Poll::record_response(RemoteID remote_id, Option option) {
@@ -59,7 +59,7 @@ void Poll::record_response(RemoteID remote_id, Option option) {
     responses_for_remote_id.push_back(resp);
   }
 
-  notify_observers(POLL_RESPONSE_RECORDED);
+  notify_observers(POLL_RESPONSE_RECORDED, true);
 }
 
 void Poll::stop() {
@@ -71,7 +71,7 @@ void Poll::stop() {
     m_stopped = true;
   }
 
-  notify_observers(POLL_STOPPED);
+  notify_observers(POLL_STOPPED, true);
 }
 
 void Poll::reset() {
@@ -85,7 +85,7 @@ void Poll::reset() {
     m_responses.clear();
   }
 
-  notify_observers(POLL_RESET);
+  notify_observers(POLL_RESET, true);
 }
 
 bool Poll::is_started() const {

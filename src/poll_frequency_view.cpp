@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -48,7 +48,7 @@ PollFrequencyView::PollFrequencyView(wxWindow *parent, PollModel *model)
 PollFrequencyView::~PollFrequencyView() {
 }
 
-void PollFrequencyView::on_update(Observable *observable, int hint) {
+void PollFrequencyView::on_update(Observable *observable, int hint, bool is_async) {
   // this could be called from the poll runner thread, so post an event
   // which will ensure that the GUI update happens in the main
   // thread

@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -36,8 +36,8 @@ void Observable::remove_observer(Observer *observer) {
   }
 }
 
-void Observable::notify_observers(int hint) {
+void Observable::notify_observers(int hint, bool is_async) {
   for (auto i = m_observers.begin(); i != m_observers.end(); ++i) {
-    (*i)->on_update(this, hint);
+    (*i)->on_update(this, hint, is_async);
   }
 }

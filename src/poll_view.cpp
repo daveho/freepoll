@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -123,8 +123,9 @@ PollView::~PollView() {
   delete m_model;
 }
 
-void PollView::on_update(Observable *observable, int hint) {
+void PollView::on_update(Observable *observable, int hint, bool is_async) {
   if (hint == PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED) {
+    assert( !is_async );
     // adjust size based on whether or not the
     // bar graph is being displayed
     if (m_model->is_bar_graph_enabled()) {

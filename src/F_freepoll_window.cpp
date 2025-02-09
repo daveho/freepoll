@@ -50,10 +50,8 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   m_poll_btn.clear_visible_focus();
 
   m_timer_display.labelsize( TEXT_SIZE );
-  m_timer_display.labelcolor( DISABLED_TEXT_COLOR );
 
   m_count_display.labelsize( TEXT_SIZE );
-  m_count_display.labelcolor( DISABLED_TEXT_COLOR );
   //m_count_display.align( FL_ALIGN_RIGHT );
 
   m_freq_display.labelsize( TEXT_SIZE );
@@ -71,6 +69,7 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   update_frequency_display();
 
   // register callbacks to handle UI events
+  m_poll_btn.callback( on_poll_btn_clicked, static_cast<void*>( this ) );
   m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>( this ) );
   m_course_chooser.callback( on_course_change, static_cast<void*>( this ) );
 
@@ -88,7 +87,12 @@ void F_FreePollWindow::show( int argc, char **argv ) {
   Fl_Window::show( argc, argv );
 }
 
-void F_FreePollWindow::on_update(Observable *observable, int hint) {
+void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
+  if ( is_async ) {
+    // TODO: redirect this update through the main GUI thread using fl_awake
+    return;
+  }
+
   switch ( hint ) {
   case PollModel::POLL_MODEL_SELECTED_COURSE_CHANGED:
     update_frequency_display();
@@ -97,6 +101,10 @@ void F_FreePollWindow::on_update(Observable *observable, int hint) {
   default:
     break;
   }
+}
+
+void F_FreePollWindow::on_poll_btn_clicked( Fl_Widget *w, void *data ) {
+
 }
 
 void F_FreePollWindow::on_course_change( Fl_Widget *w, void *data ) {
@@ -120,6 +128,11 @@ void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
 }
 
 void F_FreePollWindow::update_timer_display() {
+  if ( m_model->is_poll_running() )
+    m_timer_display.labelcolor( FL_BLACK );
+  else
+    m_timer_display.labelcolor( DISABLED_TEXT_COLOR );
+
   Timer *timer = m_model->get_timer();
   std::string disp_time = timer->get_display_time();
   m_timer_display.copy_label( disp_time.c_str() );
