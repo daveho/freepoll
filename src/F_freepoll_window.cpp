@@ -124,6 +124,7 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
   case Poll::POLL_RESPONSE_RECORDED:
   case Poll::POLL_STOPPED:
     update_count_display();
+    update_timer_display();
     // TODO: should update bar graph
     break;
   case Timer::TIMER_STARTED:
