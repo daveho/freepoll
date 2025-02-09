@@ -52,7 +52,7 @@ public:
   static const int FREQ_DISPLAY_WIDTH = 64;
   static const int FREQ_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-  static const int TEXT_SIZE = POLL_BTN_HEIGHT - 10;
+  static const int TEXT_SIZE = POLL_BTN_HEIGHT - 16;
 
   static const int GRAPH_BTN_WIDTH = POLL_BTN_WIDTH;
   static const int GRAPH_BTN_X = WIDTH - GRAPH_BTN_WIDTH;
