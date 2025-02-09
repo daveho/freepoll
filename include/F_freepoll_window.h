@@ -97,6 +97,9 @@ public:
   static void on_course_change( Fl_Widget *w, void *data );
   static void on_graph_button_clicked( Fl_Widget *w, void *data );
 
+  // handler for async updates
+  static void on_async_update( void *arg );
+
 private:
   // update display elements (these should generally be called
   // in response to UI events)

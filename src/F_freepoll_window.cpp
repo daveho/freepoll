@@ -8,6 +8,7 @@
 #include "course.h"
 #include "timer.h"
 #include "bar_graph_icon.h"
+#include "F_async_notification.h"
 #include "F_freepoll_window.h"
 
 namespace {
@@ -89,7 +90,8 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 
 void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
   if ( is_async ) {
-    // TODO: redirect this update through the main GUI thread using fl_awake
+    F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
+    Fl::awake( on_async_update, update );
     return;
   }
 
@@ -125,6 +127,17 @@ void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
     win->resize( win->x(), win->y(), win->w(), HEIGHT );
     win->m_graph_shown = true;
   }
+}
+
+void F_FreePollWindow::on_async_update( void *arg ) {
+  // This callback is invoked from the FLTK event loop
+  // to synchronize handling of asynchronous notifications.
+  // I.e., it "launders" notifications originating in
+  // other threads to make it appear that they happened in
+  // the main GUI thread.
+  F_AsyncNotification *update = static_cast<F_AsyncNotification*>( arg );
+  update->get_win()->on_update( update->get_observable(), update->get_hint(), false );
+  delete update;
 }
 
 void F_FreePollWindow::update_timer_display() {
