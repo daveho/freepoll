@@ -12,6 +12,7 @@
 #include "base.h"
 #include "datastore.h"
 #include "poll_model.h"
+#include "poll_runner.h"
 
 // Rather than properly decomposing the GUI into views for
 // individual model objects, we just have a single monolithic
@@ -20,8 +21,6 @@
 class F_FreePollWindow : public Fl_Window, public Observer {
 public:
   // for simplicity, all sizes and positions are hard-coded
-
-  static const int SPACING = 4;
 
   static const int WIDTH = 360;
 
@@ -32,24 +31,24 @@ public:
   static const int BARGRAPH_Y = CONTROLS_Y + CONTROLS_HEIGHT;
   static const int BARGRAPH_HEIGHT = 140;
 
-  static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT + SPACING*2;
-  static const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + SPACING;
+  static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
+  static const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT;
 
-  static const int CONTROL_Y = SPACING;
+  static const int CONTROL_Y = 0;
 
   static const int POLL_BTN_X = 0;
-  static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT - SPACING*2;
+  static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT;
   static const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
 
-  static const int TIMER_DISPLAY_X = POLL_BTN_X + POLL_BTN_WIDTH + SPACING;
+  static const int TIMER_DISPLAY_X = POLL_BTN_X + POLL_BTN_WIDTH;
   static const int TIMER_DISPLAY_WIDTH = 96;
   static const int TIMER_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-  static const int COUNT_DISPLAY_X = TIMER_DISPLAY_X + TIMER_DISPLAY_WIDTH + SPACING;
+  static const int COUNT_DISPLAY_X = TIMER_DISPLAY_X + TIMER_DISPLAY_WIDTH;
   static const int COUNT_DISPLAY_WIDTH = 80;
   static const int COUNT_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-  static const int FREQ_DISPLAY_X = COUNT_DISPLAY_X + COUNT_DISPLAY_WIDTH + SPACING;
+  static const int FREQ_DISPLAY_X = COUNT_DISPLAY_X + COUNT_DISPLAY_WIDTH;
   static const int FREQ_DISPLAY_WIDTH = 64;
   static const int FREQ_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
@@ -64,7 +63,7 @@ public:
 private:
   PollModel *m_model;
   DataStore *m_datastore;
-  bool m_graph_shown;
+  PollRunner *m_poll_runner;
 
   // containers
   Fl_Pack m_pack; // overall container for window contents
@@ -105,6 +104,8 @@ private:
   // in response to UI events)
   void update_timer_display();
   void update_frequency_display();
+  void show_or_hide_graph();
+  void update_count_display();
 };
 
 #endif // F_FREEPOLL_WINDOW_H

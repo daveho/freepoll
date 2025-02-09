@@ -7,6 +7,7 @@
 #include "datatypes.h"
 #include "course.h"
 #include "timer.h"
+#include "poll.h"
 #include "bar_graph_icon.h"
 #include "F_async_notification.h"
 #include "F_freepoll_window.h"
@@ -21,15 +22,15 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   : Fl_Window( WIDTH, HEIGHT_NOGRAPH, "FreePoll " FREEPOLL_VERSION "-fltk" )
   , m_model( model )
   , m_datastore( datastore )
-  , m_graph_shown( false )
+  , m_poll_runner( nullptr )
   , m_pack( 0, 0, WIDTH, HEIGHT )
   , m_course_chooser( 0, 0, WIDTH, COURSE_CHOOSER_HEIGHT )
   , m_controls( 0, 0, WIDTH, CONTROLS_HEIGHT )
-  , m_poll_btn( POLL_BTN_X, CONTROL_Y, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
-  , m_timer_display( TIMER_DISPLAY_X, CONTROL_Y, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, "" )
-  , m_count_display( COUNT_DISPLAY_X, CONTROL_Y, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "" )
-  , m_freq_display( FREQ_DISPLAY_X, CONTROL_Y, FREQ_DISPLAY_WIDTH, FREQ_DISPLAY_HEIGHT, "" )
-  , m_graph_btn( GRAPH_BTN_X, CONTROL_Y, GRAPH_BTN_WIDTH, GRAPH_BTN_HEIGHT )
+  , m_poll_btn( POLL_BTN_X, 0, POLL_BTN_WIDTH, POLL_BTN_HEIGHT )
+  , m_timer_display( TIMER_DISPLAY_X, 0, TIMER_DISPLAY_WIDTH, TIMER_DISPLAY_HEIGHT, "" )
+  , m_count_display( COUNT_DISPLAY_X, 0, COUNT_DISPLAY_WIDTH, COUNT_DISPLAY_HEIGHT, "" )
+  , m_freq_display( FREQ_DISPLAY_X, 0, FREQ_DISPLAY_WIDTH, FREQ_DISPLAY_HEIGHT, "" )
+  , m_graph_btn( GRAPH_BTN_X, 0, GRAPH_BTN_WIDTH, GRAPH_BTN_HEIGHT )
   , m_graph_box( 0, 0, WIDTH, BARGRAPH_HEIGHT ) {
 
   // Layout is
@@ -42,7 +43,6 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   //   +--------------------------------------------+
 
   m_pack.type( Fl_Pack::VERTICAL );
-  m_pack.spacing( SPACING );
 
   m_graph_box.color( 0x0000FF00 );
   m_graph_box.box( FL_FLAT_BOX );
@@ -67,6 +67,7 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
 
   // Sync displays with model
   update_timer_display();
+  update_count_display();
   update_frequency_display();
 
   // register callbacks to handle UI events
@@ -90,6 +91,8 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 
 void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
   if ( is_async ) {
+    // redirect the update to the main GUI thread: it will
+    // then be handled as a synchronous update
     F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
     Fl::awake( on_async_update, update );
     return;
@@ -99,6 +102,16 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
   case PollModel::POLL_MODEL_SELECTED_COURSE_CHANGED:
     update_frequency_display();
     break;
+  case PollModel::POLL_MODEL_BAR_GRAPH_ENABLEMENT_CHANGED:
+    show_or_hide_graph();
+    break;
+  case Poll::POLL_STARTED:
+  case Poll::POLL_RESET:
+  case Poll::POLL_RESPONSE_RECORDED:
+  case Poll::POLL_STOPPED:
+    update_count_display();
+    // TODO: should update bar graph
+    break;
   
   default:
     break;
@@ -106,7 +119,45 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
 }
 
 void F_FreePollWindow::on_poll_btn_clicked( Fl_Widget *w, void *data ) {
+  F_FreePollWindow *win = static_cast<F_FreePollWindow*>( data );
+  PollModel *model = win->m_model;
+  Poll *poll = win->m_model->get_poll();
+  DataStore *datastore = model->get_datastore();
 
+  if ( !model->is_poll_running() ) {
+    // TODO: all of this code should be factored into a memory function in PollModel
+
+    assert( win->m_poll_runner == nullptr );
+
+    if ( !model->can_start_poll() )
+      return;
+
+    // if a poll was started previously, reset it
+    poll->reset();
+    
+    // disable the course selector
+    win->m_course_chooser.deactivate();
+
+    // update the poll button label
+    win->m_poll_btn.label( "@square" );
+
+    // make sure base station frequency is set correctly
+    Course *course = model->get_current_course();
+    model->get_base()->set_frequency( course->get_frequency() );
+
+    // create a data directory for the poll results
+    // and make a note of it
+    std::string poll_data_dir = datastore->create_poll_data_dir( course );
+    model->set_poll_data_dir( poll_data_dir );
+
+    // take a screenshot
+    datastore->take_screenshot( poll_data_dir );
+
+    // start poll!
+    win->m_poll_runner = new PollRunner( model->get_base(), poll );
+
+    return;
+  }
 }
 
 void F_FreePollWindow::on_course_change( Fl_Widget *w, void *data ) {
@@ -117,16 +168,10 @@ void F_FreePollWindow::on_course_change( Fl_Widget *w, void *data ) {
 }
 
 void F_FreePollWindow::on_graph_button_clicked( Fl_Widget *w, void *data ) {
+  // Callback for when the bar graph button is clicked
   F_FreePollWindow *win = static_cast<F_FreePollWindow*>( data );
-  if ( win->m_graph_shown ) {
-    // resize the window to hide the graph
-    win->resize( win->x(), win->y(), win->w(), HEIGHT_NOGRAPH );
-    win->m_graph_shown = false;
-  } else {
-    // resize the window to show the graph
-    win->resize( win->x(), win->y(), win->w(), HEIGHT );
-    win->m_graph_shown = true;
-  }
+  bool bar_graph_enabled = win->m_model->is_bar_graph_enabled();
+  win->m_model->set_bar_graph_enabled( !bar_graph_enabled );
 }
 
 void F_FreePollWindow::on_async_update( void *arg ) {
@@ -157,6 +202,28 @@ void F_FreePollWindow::update_frequency_display() {
   Course *course = courses.at( course_index );
   Frequency freq = course->get_frequency();
   std::string freq_str = freq.str();
-  //std::cout << "freq_str=" << freq_str << "\n";
   m_freq_display.copy_label( freq.str().c_str() );
+}
+
+void F_FreePollWindow::show_or_hide_graph() {
+  bool bar_graph_enabled = m_model->is_bar_graph_enabled();
+
+  if ( !bar_graph_enabled )
+    // resize the window to hide the graph
+    resize( x(), y(), w(), HEIGHT_NOGRAPH );
+  else
+    // resize the window to show the graph
+    resize( x(), y(), w(), HEIGHT );
+}
+
+void F_FreePollWindow::update_count_display() {
+  if ( m_model->is_poll_running() )
+    m_count_display.labelcolor( FL_BLACK );
+  else
+    m_count_display.labelcolor( DISABLED_TEXT_COLOR );
+
+  Poll *poll = m_model->get_poll();
+  unsigned count = poll->get_num_final_responses();
+  std::string count_str = std::to_string( count );
+  m_count_display.copy_label( count_str.c_str() );
 }
