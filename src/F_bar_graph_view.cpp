@@ -7,7 +7,7 @@
 
 namespace {
 
-const int INSET = 4;
+const int INSET = 8;
 
 const Fl_Color BAR_COLORS[] = {
   0x0000FF00,
@@ -73,14 +73,18 @@ void F_BarGraphView::draw() {
   for ( int i = 0; i < 5; ++i )
     count[i] /= double( m_cur_responses.size() );
   
-  int bar_max_height = effective_height - LABEL_HEIGHT - INSET;
+  int bar_max_height = effective_height - LABEL_HEIGHT - INSET*2;
   
   // draw bars
   for ( int i = 0; i < 5; ++i ) {
     int bar_x = xpos + INSET + x_off + i*(bar_width + INSET);
     int bar_actual_height = int( ::round( bar_max_height * count[i] ) );
-    int bar_y = ypos + INSET + effective_height - INSET - LABEL_HEIGHT;
+    int bar_y = ypos + effective_height - LABEL_HEIGHT - bar_actual_height;
     fl_draw_box( FL_FLAT_BOX, bar_x, bar_y, bar_width, bar_actual_height, BAR_COLORS[i] );
+/*
+    std::cout << "draw bar " << i << ": "
+      << bar_x << "," << bar_y << "," << bar_width << "," << bar_actual_height << "\n";
+*/
   }
 }
 
