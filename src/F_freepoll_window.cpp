@@ -9,12 +9,17 @@
 #include "timer.h"
 #include "poll.h"
 #include "bar_graph_icon.h"
+#include "exception.h"
 #include "F_async_notification.h"
 #include "F_freepoll_window.h"
 
 namespace {
 
 Fl_Pixmap bar_graph_pixmap( bar_graph_icon );
+
+// label text for the poll button
+const char *PLAY_LABEL = "@>";
+const char *STOP_LABEL = "@square";
 
 }
 
@@ -47,7 +52,7 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   m_graph_box.color( 0x0000FF00 );
   m_graph_box.box( FL_FLAT_BOX );
 
-  m_poll_btn.label( "@>" );
+  m_poll_btn.label( PLAY_LABEL );
   m_poll_btn.clear_visible_focus();
 
   m_timer_display.labelsize( TEXT_SIZE );
@@ -75,12 +80,17 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   m_graph_btn.callback( on_graph_button_clicked, static_cast<void*>( this ) );
   m_course_chooser.callback( on_course_change, static_cast<void*>( this ) );
 
-  // Observe the PollModel
+  // Observe the PollModel, Poll, and Timer
   m_model->add_observer( this );
+  m_model->get_poll()->add_observer( this );
+  m_model->get_timer()->add_observer( this );
 }
 
 F_FreePollWindow::~F_FreePollWindow() {
-
+  // unregister from observing model objects
+  m_model->get_timer()->remove_observer( this );
+  m_model->get_poll()->remove_observer( this );
+  m_model->remove_observer( this );
 }
 
 void F_FreePollWindow::show( int argc, char **argv ) {
@@ -94,7 +104,7 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
     // redirect the update to the main GUI thread: it will
     // then be handled as a synchronous update
     F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
-    Fl::awake( on_async_update, update );
+    Fl::awake( on_async_update, static_cast<void*>( update ) );
     return;
   }
 
@@ -112,7 +122,11 @@ void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async
     update_count_display();
     // TODO: should update bar graph
     break;
-  
+  case Timer::TIMER_STARTED:
+  case Timer::TIMER_NUM_SECONDS_UPDATED:
+  case Timer::TIMER_STOPPED:
+    update_timer_display();
+    break;
   default:
     break;
   }
@@ -125,7 +139,7 @@ void F_FreePollWindow::on_poll_btn_clicked( Fl_Widget *w, void *data ) {
   DataStore *datastore = model->get_datastore();
 
   if ( !model->is_poll_running() ) {
-    // TODO: all of this code should be factored into a memory function in PollModel
+    // TODO: most of this code should be factored into a member function in PollModel
 
     assert( win->m_poll_runner == nullptr );
 
@@ -133,13 +147,19 @@ void F_FreePollWindow::on_poll_btn_clicked( Fl_Widget *w, void *data ) {
       return;
 
     // if a poll was started previously, reset it
-    poll->reset();
+    if ( poll->is_started() ) {
+      assert( poll->is_stopped() );
+      poll->reset();
+    }
     
     // disable the course selector
     win->m_course_chooser.deactivate();
 
+    // start the timer
+    model->get_timer()->start();
+
     // update the poll button label
-    win->m_poll_btn.label( "@square" );
+    win->m_poll_btn.label( STOP_LABEL );
 
     // make sure base station frequency is set correctly
     Course *course = model->get_current_course();
@@ -155,8 +175,41 @@ void F_FreePollWindow::on_poll_btn_clicked( Fl_Widget *w, void *data ) {
 
     // start poll!
     win->m_poll_runner = new PollRunner( model->get_base(), poll );
+    win->m_poll_runner->start_poll();
 
     return;
+  }
+
+  if ( model->is_poll_running() ) {
+    // TODO: most of this code should be factored into a member function in PollModel
+
+    assert( win->m_poll_runner != nullptr );
+
+    // stop the timer
+    model->get_timer()->stop();
+
+    // change the poll button label back to "play"
+    win->m_poll_btn.label( PLAY_LABEL );
+
+    // stop the poll
+    win->m_poll_runner->stop_poll();
+    delete win->m_poll_runner;
+    win->m_poll_runner = nullptr;
+
+    // write poll results to files
+    std::string poll_data_dir = model->get_poll_data_dir();
+    try {
+      datastore->write_poll_results( poll_data_dir, poll );
+    } catch ( PollException &ex ) {
+      // FIXME: should display in GUI somehow
+      std::cerr << "Error writing poll data: " << ex.what() << "\n";
+    }
+
+    // poll is done
+    model->set_poll_data_dir( "" );
+
+    // re-enable course selection
+    win->m_course_chooser.activate();
   }
 }
 
