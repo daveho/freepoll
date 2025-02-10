@@ -1,5 +1,9 @@
 # FreePoll
 
+**Note**: this branch is for the wxWidgets GUI that has been
+superceded in favor of the FLTK GUI. I do not plan to do any further
+development using wxWidgets.
+
 This is a somewhat experimental attempt to create an open source client program
 for the [iClicker](https://www.iclicker.com/) system for classroom
 polling.
