@@ -1,5 +1,6 @@
 #include <FL/fl_draw.H>
 #include <iostream>
+#include <algorithm>
 #include <cmath>
 #include "poll_model.h"
 #include "poll.h"
@@ -83,8 +84,15 @@ void F_BarGraphView::draw() {
     count[int(pair.second)] += 1.0;
   
   // normalize counts to range 0.0-1.0
+  // (so that each is proportion of overall responses)
   for ( int i = 0; i < 5; ++i )
     count[i] /= double( m_cur_responses.size() );
+
+  // re-normalize so that max=1 for computation of bar height
+  auto j = std::max_element( count, count + 5 );
+  double maxval = *j;
+  for ( int i = 0; i < 5; ++i )
+    count[i] = count[i] / maxval;
   
   int bar_max_height = effective_height - LABEL_HEIGHT - INSET*2;
   
