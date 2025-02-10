@@ -104,17 +104,19 @@ control.
 
 ## Running the GUI
 
-Once you have your course directories set up, run the `freepoll-gui` program.
+Once you have your course directories set up, run the `freepoll-gui-fltk` program.
 
 Note that you need to have your iClicker base station connected via USB
-before starting `freepoll-gui`.  Also note that you will need to have created
-at least one course directory before `freepoll-gui` will run.
+before starting `freepoll-gui-fltk`.  Also note that you will need to have created
+at least one course directory before `freepoll-gui-fltk` will run.
 
-
-When you run `freepoll-gui`, it will pop up an always-on-top window that initially
+When you run `freepoll-gui-fltk`, it will pop up an always-on-top window that initially
 looks something like this:
 
 ![screenshot of initial window](img/initial_window.png)
+
+(FIXME: the fltk version doesn't yet make itself always on top.
+Need to add that.)
 
 The choice box should have all of your courses. Select the one you want to
 put your poll data in.
