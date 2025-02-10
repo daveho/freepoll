@@ -1,4 +1,4 @@
-// Copyright (c) 2022, David Hovemeyer <david.hovemeyer@gmail.com>
+// Copyright (c) 2022-2025, David Hovemeyer <david.hovemeyer@gmail.com>
 
 // This file is part of FreePoll.
 //
@@ -32,6 +32,6 @@ enum class Option {
 typedef uint64_t Timestamp;
 
 // Version string
-#define FREEPOLL_VERSION "0.03"
+#define FREEPOLL_VERSION "0.05"
 
 #endif // DATATYPES_H
