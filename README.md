@@ -30,20 +30,22 @@ background.
 ### Compilation on Linux
 
 FreePoll currently only works fully on Linux, and has only been tested
-on Ubuntu 22.04.
+on Ubuntu 22.04 and 24.04.
 
 On Linux, you will need
 
 * g++
 * make
 * the libusb/hidapi development package
-* the wxWidgets GTK3 development package
+* the fltk development package
 
 On Debian or Ubuntu:
 
 ```
-sudo apt install g++ make libhidapi-dev libwxgtk3.0-gtk3-dev
+sudo apt install g++ make libhidapi-dev libfltk1.3-dev
 ```
+
+Note that FLTK 1.4 should also work, but I haven't tried it.
 
 To compile the program:
 
@@ -56,7 +58,7 @@ make -j
 
 Two executables will be built in the `build` directory.
 
-The `freepoll-gui` executable is probably the one you want to use.
+The `freepoll-gui-fltk` executable is probably the one you want to use.
 The [Guide](guide.md) explains how to configure and use this program.
 
 The `freepoll` executable is a very simple command line utility that
@@ -64,6 +66,7 @@ runs a poll and writes the results to a CSV file. You wil need
 to use control-C to end the poll. (The functionality of this program
 is modeled on [iclickerpoll](https://github.com/siefkenj/iclickerpoll).)
 
+<!--
 ### Compilation on Windows (experimental!)
 
 A very preliminary effort to get FreePoll working on Windows has been started.
@@ -91,6 +94,7 @@ Compile the code:
 make depend
 make -j
 ```
+-->
 
 ## Why?
 
@@ -141,8 +145,9 @@ run and the responses written to a CSV file.
 
 My contribution was translating Jason's work to C++, and then writing
 a simple GUI for running polls.  The GUI is implemented using
-[wxWidgets](https://www.wxwidgets.org/).  Note that it's only been
-tested on Linux using wxGTK.
+[fltk](https://www.fltk.org/).  Note that it's only been tested on Linux. In principle,
+it should build on Windows with suitable fltk and libusb packages,
+but I haven't gotten this to work yet.
 
 The iClicker base station appears as a Human Interface Device (HID),
 which is probably the easiest kind of USB device to communicate with.
