@@ -41,6 +41,9 @@ build/%.o : src/%.cpp
 build/freepoll-gui-fltk : $(GUI_OBJS) $(COMMON_OBJS)
 	$(CXX) -o $@ $(GUI_OBJS) $(COMMON_OBJS) $(FLTK_LDFLAGS) $(HIDAPI_LDFLAGS)
 
+clean :
+	rm -f build/*.o build/freepoll-gui-fltk
+
 depend :
 	$(CXX) $(CXXFLAGS) -M $(ALL_SRCS:%=src/%) \
 		| scripts/fixdeps.rb \
