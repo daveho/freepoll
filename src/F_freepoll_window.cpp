@@ -80,7 +80,7 @@ const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
 
 }
 
-//#define DEBUG( stmt ) do { stmt } while (0)
+//#define DEBUG( stmt ) do { stmt; } while (0)
 #define DEBUG( stmt )
 
 F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )

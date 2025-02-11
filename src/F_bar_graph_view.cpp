@@ -43,7 +43,7 @@ const int LABEL_HEIGHT = 16;
 
 }
 
-//#define DEBUG( stmt ) do { stmt } while (0)
+//#define DEBUG( stmt ) do { stmt; } while (0)
 #define DEBUG( stmt )
 
 F_BarGraphView::F_BarGraphView( int x, int y, int w, int h )
