@@ -43,6 +43,9 @@ const int LABEL_HEIGHT = 16;
 
 }
 
+//#define DEBUG( stmt ) do { stmt } while (0)
+#define DEBUG( stmt )
+
 F_BarGraphView::F_BarGraphView( int x, int y, int w, int h )
   : Fl_Box( x, y, w, h ) {
 
@@ -62,12 +65,12 @@ void F_BarGraphView::draw() {
   int effective_width = width - INSET*2;
   int height = h();
   int effective_height = height - INSET*2;
-/*
-  std::cout << "draw bar graph "
+
+  DEBUG( std::cout << "draw bar graph "
     << INSET << "," << INSET << ","
     << effective_width << "," << effective_height
-    << "\n";
-*/
+    << "\n" );
+
 
   // draw graph background
   fl_draw_box( FL_FLAT_BOX, xpos + INSET, ypos + INSET, effective_width, effective_height, FL_WHITE );
@@ -119,10 +122,9 @@ void F_BarGraphView::draw() {
     int bar_actual_height = int( ::round( bar_max_height * count[i] ) );
     int bar_y = ypos + effective_height - LABEL_HEIGHT - bar_actual_height;
     fl_draw_box( FL_FLAT_BOX, bar_x, bar_y, bar_width, bar_actual_height, BAR_COLORS[i] );
-/*
-    std::cout << "draw bar " << i << ": "
-      << bar_x << "," << bar_y << "," << bar_width << "," << bar_actual_height << "\n";
-*/
+
+    DEBUG( std::cout << "draw bar " << i << ": "
+      << bar_x << "," << bar_y << "," << bar_width << "," << bar_actual_height << "\n" );
   }
 }
 

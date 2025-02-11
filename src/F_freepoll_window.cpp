@@ -40,45 +40,48 @@ const char *STOP_LABEL = "@square";
 
 // for simplicity, all sizes and positions are hard-coded
 
-static const int WIDTH = 360;
+const int WIDTH = 360;
 
-static const int COURSE_CHOOSER_Y = 0;
-static const int COURSE_CHOOSER_HEIGHT = 24;
-static const int CONTROLS_Y = COURSE_CHOOSER_Y + COURSE_CHOOSER_HEIGHT;
-static const int CONTROLS_HEIGHT = 54;
-static const int BARGRAPH_Y = CONTROLS_Y + CONTROLS_HEIGHT;
-static const int BARGRAPH_HEIGHT = 160;
+const int COURSE_CHOOSER_Y = 0;
+const int COURSE_CHOOSER_HEIGHT = 24;
+const int CONTROLS_Y = COURSE_CHOOSER_Y + COURSE_CHOOSER_HEIGHT;
+const int CONTROLS_HEIGHT = 54;
+const int BARGRAPH_Y = CONTROLS_Y + CONTROLS_HEIGHT;
+const int BARGRAPH_HEIGHT = 160;
 
-static const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
-static const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT;
+const int HEIGHT = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT + BARGRAPH_HEIGHT;
+const int HEIGHT_NOGRAPH = COURSE_CHOOSER_HEIGHT + CONTROLS_HEIGHT;
 
-static const int CONTROL_Y = 0;
+const int CONTROL_Y = 0;
 
-static const int POLL_BTN_X = 0;
-static const int POLL_BTN_WIDTH = CONTROLS_HEIGHT;
-static const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
+const int POLL_BTN_X = 0;
+const int POLL_BTN_WIDTH = CONTROLS_HEIGHT;
+const int POLL_BTN_HEIGHT = POLL_BTN_WIDTH;
 
-static const int TIMER_DISPLAY_X = POLL_BTN_X + POLL_BTN_WIDTH;
-static const int TIMER_DISPLAY_WIDTH = 96;
-static const int TIMER_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+const int TIMER_DISPLAY_X = POLL_BTN_X + POLL_BTN_WIDTH;
+const int TIMER_DISPLAY_WIDTH = 96;
+const int TIMER_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-static const int COUNT_DISPLAY_X = TIMER_DISPLAY_X + TIMER_DISPLAY_WIDTH;
-static const int COUNT_DISPLAY_WIDTH = 80;
-static const int COUNT_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+const int COUNT_DISPLAY_X = TIMER_DISPLAY_X + TIMER_DISPLAY_WIDTH;
+const int COUNT_DISPLAY_WIDTH = 80;
+const int COUNT_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-static const int FREQ_DISPLAY_X = COUNT_DISPLAY_X + COUNT_DISPLAY_WIDTH;
-static const int FREQ_DISPLAY_WIDTH = 64;
-static const int FREQ_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
+const int FREQ_DISPLAY_X = COUNT_DISPLAY_X + COUNT_DISPLAY_WIDTH;
+const int FREQ_DISPLAY_WIDTH = 64;
+const int FREQ_DISPLAY_HEIGHT = POLL_BTN_HEIGHT;
 
-static const int TEXT_SIZE = POLL_BTN_HEIGHT - 16;
+const int TEXT_SIZE = POLL_BTN_HEIGHT - 16;
 
-static const int GRAPH_BTN_WIDTH = POLL_BTN_WIDTH;
-static const int GRAPH_BTN_X = WIDTH - GRAPH_BTN_WIDTH;
-static const int GRAPH_BTN_HEIGHT = POLL_BTN_WIDTH;
+const int GRAPH_BTN_WIDTH = POLL_BTN_WIDTH;
+const int GRAPH_BTN_X = WIDTH - GRAPH_BTN_WIDTH;
+const int GRAPH_BTN_HEIGHT = POLL_BTN_WIDTH;
 
-static const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
+const Fl_Color DISABLED_TEXT_COLOR = 0x80808000;
 
 }
+
+//#define DEBUG( stmt ) do { stmt } while (0)
+#define DEBUG( stmt )
 
 F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   : Fl_Window( WIDTH, HEIGHT_NOGRAPH, "FreePoll " FREEPOLL_VERSION "-fltk" )
@@ -154,7 +157,7 @@ void F_FreePollWindow::show( int argc, char **argv ) {
 
 void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
   if ( is_async ) {
-    std::cout << "recevied async update (hint=" << hint << ")\n";
+    DEBUG( std::cout << "recevied async update (hint=" << hint << ")\n" );
     F_AsyncNotification *update = new F_AsyncNotification( this, observable, hint );
 #if 0
     // redirect the update to the main GUI thread: it will
@@ -312,7 +315,7 @@ void F_FreePollWindow::on_timer_tick( void *data ) {
 }
 
 void F_FreePollWindow::update_timer_display() {
-  std::cout << "update timer\n";
+  DEBUG( std::cout << "update timer\n" );
 
   if ( m_model->is_poll_running() )
     m_timer_display.labelcolor( FL_BLACK );
@@ -330,7 +333,7 @@ void F_FreePollWindow::update_frequency_display() {
   Course *course = courses.at( course_index );
   Frequency freq = course->get_frequency();
   std::string freq_str = freq.str();
-  m_freq_display.copy_label( freq.str().c_str() );
+  m_freq_display.copy_label( freq_str.c_str() );
 }
 
 void F_FreePollWindow::show_or_hide_graph() {
@@ -345,7 +348,7 @@ void F_FreePollWindow::show_or_hide_graph() {
 }
 
 void F_FreePollWindow::update_count_display() {
-  std::cout << "update count\n";
+  DEBUG( std::cout << "update count\n" );
 
   if ( m_model->is_poll_running() )
     m_count_display.labelcolor( FL_BLACK );

@@ -1,7 +1,2 @@
 *.swp
-/*.o
 /depend.mak
-/freepoll
-/freepoll-gui
-/*.csv
-/*.exe
