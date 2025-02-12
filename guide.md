@@ -115,9 +115,6 @@ looks something like this:
 
 ![screenshot of initial window](img/initial_window.png)
 
-(FIXME: the fltk version doesn't yet make itself always on top.
-Need to add that.)
-
 The choice box should have all of your courses. Select the one you want to
 put your poll data in.
 
