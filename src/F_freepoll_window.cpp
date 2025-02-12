@@ -26,6 +26,7 @@
 #include "timer.h"
 #include "poll.h"
 #include "bar_graph_icon.h"
+#include "freepoll_window_icon.h"
 #include "exception.h"
 #include "F_async_notification.h"
 #include "F_freepoll_window.h"
@@ -33,6 +34,7 @@
 namespace {
 
 Fl_Pixmap bar_graph_pixmap( bar_graph_icon );
+Fl_Pixmap freepoll_window_icon_pixmap( freepoll_window_icon );
 
 // label text for the poll button
 const char *PLAY_LABEL = "@>";
@@ -131,6 +133,10 @@ F_FreePollWindow::F_FreePollWindow( PollModel *model, DataStore *datastore )
   update_timer_display();
   update_count_display();
   update_frequency_display();
+
+  // set window icon
+  Fl_RGB_Image img( &freepoll_window_icon_pixmap, FL_WHITE );
+  default_icon( &img );
 
   // register callbacks to handle UI events
   m_poll_btn.callback( on_poll_btn_clicked, static_cast<void*>( this ) );
