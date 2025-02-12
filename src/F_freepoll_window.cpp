@@ -18,6 +18,7 @@
 #include <FL/fl_ask.H>
 #include <FL/Fl_Pack.H>
 #include <FL/Fl_Pixmap.H>
+#include <FL/fl_draw.H> // for XWindows headers
 #include <iostream>
 #include <sstream>
 #include <cassert>
@@ -159,6 +160,11 @@ void F_FreePollWindow::show( int argc, char **argv ) {
   // Could do application-specific command line argument
   // handling here...
   Fl_Window::show( argc, argv );
+
+  // The FreePoll window sets itself to be always on top
+  // (since it typically the peer instruction questions will be
+  // shown using a fullscreen app)
+  set_always_on_top();
 }
 
 void F_FreePollWindow::on_update(Observable *observable, int hint, bool is_async) {
@@ -318,6 +324,29 @@ void F_FreePollWindow::on_timer_tick( void *data ) {
     delete update;
   }
   Fl::repeat_timeout( 0.1, on_timer_tick, data );
+}
+
+void F_FreePollWindow::set_always_on_top() {
+  // See: https://groups.google.com/g/fltkgeneral/c/Je0bmtom-Og
+  XEvent ev;
+  static const char* const names[2] = { "_NET_WM_STATE",
+                                        "_NET_WM_STATE_ABOVE"
+                                      };
+  Atom atoms[ 2 ];
+  fl_open_display();
+  XInternAtoms(fl_display, (char**)names, 2, False, atoms );
+  Atom net_wm_state = atoms[ 0 ];
+  Atom net_wm_state_above = atoms[ 1 ];
+  ev.type = ClientMessage;
+  ev.xclient.window = fl_xid(this);
+  ev.xclient.message_type = net_wm_state;
+  ev.xclient.format = 32;
+  ev.xclient.data.l[ 0 ] = (int) true;
+  ev.xclient.data.l[ 1 ] = net_wm_state_above;
+  ev.xclient.data.l[ 2 ] = 0;
+  XSendEvent(fl_display,
+              DefaultRootWindow(fl_display),  False,
+              SubstructureNotifyMask|SubstructureRedirectMask, &ev);
 }
 
 void F_FreePollWindow::update_timer_display() {

@@ -85,6 +85,8 @@ public:
   static void on_timer_tick( void *data );
 
 private:
+  void set_always_on_top();
+
   // update display elements (these should generally be called
   // in response to UI events)
   void update_timer_display();
