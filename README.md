@@ -42,10 +42,12 @@ On Linux, you will need
 On Debian or Ubuntu:
 
 ```
-sudo apt install g++ make libhidapi-dev libfltk1.3-dev
+sudo apt install g++ make libhidapi-dev libfltk1.3-dev libsm-dev libxext-dev
 ```
 
 Note that FLTK 1.4 should also work, but I haven't tried it.
+
+You might need to install `pkg-config` (`sudo apt install pkg-config`) as well.
 
 To compile the program:
 
